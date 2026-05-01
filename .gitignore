@@ -7,10 +7,12 @@
 *.dll
 *.so
 *.dylib
-
-# Test binary, built with `go test -c`
+EyeInThe_Sky/sumradme.md
+# Test binary, built with ` test -c`
 *.test
-
+sumradme
+sumradme.md
+EyeInThe_Sky
 # Code coverage profiles and other test artifacts
 *.out
 coverage.*
