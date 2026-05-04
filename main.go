@@ -10,9 +10,9 @@ type TrustLevel int
 
 type SourceNode interface{
 
-	DetectConnection() (string, error)
+	DetectConnection() (string, bool, error)
 	//HandkShake() (TrustLevel, error)
-	Authenticate() (TrustLevel, error)	
+	//Authenticate() (TrustLevel, error)	
 	FetchLatest() (TelemetryFrame, error)
 
 }
@@ -42,6 +42,7 @@ type TelemetryFrame struct {
 	Latency	time.Duration
 }
 
+var IsSecure bool
 var analysisMode TrustLevel = Unsecure //TODO harcorded value for testing only, the analysisMode restrains the capabilities
 //of communication, in a secure source, communication can be lighter, in a unsecure communication is way more restricted, besides other UI/UX changes
 //Analysis Mode is supposed to be obtained via a "handshake" when both devices are connected, before anything starts
@@ -82,24 +83,24 @@ func main(){
 
 	// Test 2: SSH connection of trusted sv
 	prodServerSSH := ServerConnection{
-		USBAddr: "/dev/ttyUSB99", // Cambiado a 99 para forzar el fallback a SSH
+		USBAddr: "", // Cambiado a 99 para forzar el fallback a SSH
 		IPAddr:  "10.0.0.5",
 	}
 	fmt.Println("\n--- INITIATING PRODUCTION NODE (SSH FALLBACK) ---")
 	BootNode(prodServerSSH)
 
 	// Test 3: Unsecure(pentest node) via usb -> worked but do not detect is a untrusted source 
-	fmt.Println("\n--- INITIATING UNTRUSTED NODE ---")
+	fmt.Println("\n--- INITIATING UNTRUSTED USB NODE ---")
 	pentestNodeUSB := ServerConnection{
-		USBAddr: "/dev/ttyUSB0",
+		USBAddr: "/dev/ttyUSB99",
 		IPAddr:  "",
 	}
 	BootNode(pentestNodeUSB)
 
 	// Test 4: Unsecure(pentest node) via ssh ->not working ip detection stuff || BOOT error works nice tho
-	fmt.Println("\n--- INITIATING UNTRUSTED NODE ---")
+	fmt.Println("\n--- INITIATING UNTRUSTED SSH NODE ---")
 	pentestNodeSSH := ServerConnection{
-		USBAddr: "/dev/ttyUSB1",
+		USBAddr: "",
 		IPAddr:  "192.168.1.100",
 	}
 	BootNode(pentestNodeSSH)
@@ -114,20 +115,29 @@ func (server ServerConnection) FetchLatest() (TelemetryFrame, error) {
 	}, nil
 }
 
-func(server ServerConnection) DetectConnection() (string,error) {
+func(server ServerConnection) DetectConnection() (string, bool, error) {
 	fmt.Printf("[EYE IN THE SKY] Looking for USB at %s...\n", server.USBAddr)
-	usbAvailable := checkUSB(server.USBAddr)
 
-	if usbAvailable{
-		return "PHYSICAL_USB", nil
+	usbAvailable, err := checkUSB(server.USBAddr)
+
+	if usbAvailable == int(Secure) {
+		return "PHYSICAL_USB", true, nil
+	} else if usbAvailable == int(Unsecure) {
+		return "PHYSICAL_USB", false, nil
 	}
 
-	fmt.Printf("[EYE IN THE SKY] USB unavailable. Attempting SSH fallback to %s...\n", server.IPAddr)
-	if checkNetwork(server.IPAddr){
-		return "NETWORK_SSH", nil
+	fmt.Println(err)
+	fmt.Printf("[EYE IN THE SKY] looking for ssh connection at %s..\n", server.IPAddr)
+
+	netStatus := checkNetwork(server.IPAddr)
+
+	if netStatus == int(Secure) {
+		return "NETWORK_SSH", true, nil
+	} else if netStatus == int(Unsecure) {
+		return "NETWORK_SSH", false, nil
 	}
 
-	return "", fmt.Errorf("node unreachable: all conections failed")
+	return "", false, fmt.Errorf("[EYE IN THE SKY] node unreachable: all connections failed")
 
 }
 
@@ -143,54 +153,38 @@ func filterUnsecure(frames []TelemetryFrame) []TelemetryFrame{
 	return unsecureFrame
 }
 
-func (server ServerConnection) Authenticate() (TrustLevel, error){
- 
-    nodeID := server.USBAddr + server.IPAddr
-
-   
-    if strings.Contains(nodeID, "192.168") || strings.Contains(nodeID, "VULN") {
-        return Unsecure, nil
-    }
-
-    return Secure, nil
-}
 
 
-func checkUSB(addr string) bool {
+func checkUSB(addr string) (int, error) {
 	if addr == "/dev/ttyUSB0"{
-		return true
+		return int(Secure), nil
+	}else if strings.HasPrefix(addr, "/dev/ttyUSB"){
+		return int(Unsecure), nil
 	}
-	return false
+	return -1, fmt.Errorf("[EYE IN THE SKY] USB unavailable. Attempting SSH fallback")
 }
 
-func checkNetwork(ip string) bool {
+func checkNetwork(ip string) int {
 	if strings.HasPrefix(ip, "10.0.0"){
-		return true
+		return int(Secure)
 	}
-	return false
+	return int(Unsecure)
 }
 
 func BootNode(node SourceNode) {
     
-    transport, err := node.DetectConnection()
+    transport, IsSecure , err := node.DetectConnection()
+	
     if err != nil {
     
         fmt.Printf("[EYE IN THE SKY] BOOT ERROR: %v\n", err)
         return
     }
 
-    level, err := node.Authenticate()
-    if err != nil {
-        fmt.Printf("[EYE IN THE SKY]  AUTH ERROR: %v\n", err)
-        return
-    }
-
-    analysisMode = level
-
     fmt.Printf("--------------------------------------\n")
     fmt.Printf("[EYE IN THE SKY] NODE ONLINE | Transport: %s\n", transport)
     
-    if analysisMode == Unsecure {
+    if !IsSecure {
         fmt.Println("[EYE IN THE SKY] <WARNING> Running in Untrusted Source")
     } else {
         fmt.Println("[EYE IN THE SKY] SECURE CONNECTION ESTABLISHED")
