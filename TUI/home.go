@@ -64,16 +64,38 @@ func (m Model) welcomeView() string {
 		m.uptime(),
 	)
 
-	rightContent := fmt.Sprintf(
-		"UTILITY INFO\n------------\n"+
-			"Press [ENTER] to Init Handshake\n"+
-			"Press [Ctrl+Q]     to Exit Analysis\n\n"+
-			"VLAN: %d (Isolated)\n"+
-			"Terminal: %dx%d",
-		vlan,
-		m.Width,
-		m.Height,
+rightContent := fmt.Sprintf(
+	"Flags\n------------\n"+
+		"Press Ctrl to set flags then enter and login\n"+
+        "[u]      - Force USB Transport\n" +
+        "[s]      - Force SSH Fallback\n" +
+        "[m]      - Toggle Analysis Mode\n" +
+	"Utility Info\n------------\n" +
+		"[enter]  - Start Handshake\n" +
+		"[Ctrl + q]      - Abort / Exit Session",
+	/* TODO this goes here? maybe render this INSIDE the program
+	"Keybindings\n------------\n" +
+		"Navigation\n------------\n" +
+    		"[j/k]    - Scroll Logs (Down/Up)\n" +
+    		"[d/u]    - Half-page (Down/Up)\n" +
+    		"[gg/G]   - Jump to Start/End\n" +
+    		"[f]      - Toggle Auto-Follow (tail -f)\n" +
+		"Panel Management\n------------\n" +
+    		"[h/l]    - Switch Focus (Side/Center)\n" +
+    		"[z]      - Maximize Focused Panel\n" +
+    		"[tab]    - Cycle Interactive Elements\n" +
+		"Security & Filtering\n------------\n" +
+    		"[/]      - Incremental Search (Regex)\n" +
+    		"[v]      - View Mode (Hexdump/ASCII)\n" +
+    		"[x]      - Clear Screen Buffer\n" +
+    		"[!]      - Quick Command Prompt\n" +
+		"Session & Node Control\n------------\n" +
+    		"[n]      - Open Node Selector\n" +
+    		"[L]      - Lock Terminal (Auth Req)\n" +
+    		"[R]      - Force Hard Reconnection\n", 
+		*/
 	)
+
 
 	availableWidth := m.Width
 	if availableWidth <= 0 {
@@ -120,3 +142,4 @@ func (m Model) welcomeView() string {
 
 	return lipgloss.JoinHorizontal(lipgloss.Top, left, lipgloss.NewStyle().Width(gap).Render(""), right)
 }
+
