@@ -1,4 +1,4 @@
-package createConnection
+package connection
 
 import (
 	"fmt"
@@ -12,6 +12,17 @@ const (
 	Secure   TrustLevel = iota
 	Unsecure
 )
+
+func (t TrustLevel) String() string {
+    switch t {
+    case Secure:
+        return "Secure"
+    case Unsecure:
+        return "Unsecure"
+    default:
+        return "Unknown"
+    }
+}
 
 type TelemetryFrame struct {
 	SourceID string

@@ -1,9 +1,16 @@
 package main
 
 import (
-	"EyeInThe_Sky/createConnection"
+	tui "EyeInThe_Sky/TUI"
+	connection "EyeInThe_Sky/createConnection"
+	"flag"
 	"fmt"
+	"os"
+	"os/user"
+	"strings"
 	"time"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 type ServerConnection struct {
@@ -11,9 +18,24 @@ type ServerConnection struct {
 	IPAddr  string
 }
 
-var analysisMode createConnection.TrustLevel = createConnection.Unsecure // TODO HARCORDED VALUE
+var analysisMode connection.TrustLevel = connection.Unsecure // TODO HARCORDED VALUE
 
 func main() {
+	modeFlag := flag.String("mode", analysisMode.String(), "analysis mode: secure or unsecure")
+	operatorFlag := flag.String("operator", "", "operator name shown in the TUI")
+	vlanFlag := flag.Int("vlan", 10, "VLAN identifier shown in the TUI")
+	flag.Parse()
+
+	operator := *operatorFlag
+	if operator == "" {
+		if currentUser, err := user.Current(); err == nil && currentUser.Username != "" {
+			operator = currentUser.Username
+		} else {
+			operator = "operator"
+		}
+	}
+
+	parsedMode := parseTrustLevel(*modeFlag)
 
 
 	/*currentLabFrame := TelemetryFrame{
@@ -38,12 +60,13 @@ func main() {
 	//TODO testing connection mock functions
 
 	// Test 1: USB connection of trusted sv
+	/* TODO testing OPEN a tui
 	prodServerUSB := ServerConnection{
 		USBAddr: "/dev/ttyUSB0",
 		IPAddr:  "",
 	}
 	fmt.Println("--- INITIATING USB PRODUCTION NODE ---")
-	createConnection.BootNode(prodServerUSB) // Usar función exportada
+	connection.BootNode(prodServerUSB) // Usar función exportada
 
 	// Test 2: SSH connection of trusted sv
 	prodServerSSH := ServerConnection{
@@ -51,7 +74,7 @@ func main() {
 		IPAddr:  "10.0.0.5",
 	}
 	fmt.Println("\n--- INITIATING PRODUCTION NODE (SSH FALLBACK) ---")
-	createConnection.BootNode(prodServerSSH)
+	connection.BootNode(prodServerSSH)
 
 	// Test 3: Unsecure(pentest node) via usb -> worked but do not detect is a untrusted source 
 	fmt.Println("\n--- INITIATING UNTRUSTED USB NODE ---")
@@ -59,7 +82,7 @@ func main() {
 		USBAddr: "/dev/ttyUSB99",
 		IPAddr:  "",
 	}
-	createConnection.BootNode(pentestNodeUSB)
+	connection.BootNode(pentestNodeUSB)
 
 	// Test 4: Unsecure(pentest node) via ssh ->not working ip detection stuff || BOOT error works nice tho
 	fmt.Println("\n--- INITIATING UNTRUSTED SSH NODE ---")
@@ -67,13 +90,25 @@ func main() {
 		USBAddr: "",
 		IPAddr:  "192.168.1.100",
 	}
-	createConnection.BootNode(pentestNodeSSH)
+	connection.BootNode(pentestNodeSSH) */
+
+	    p := tea.NewProgram(tui.Model{
+		AnalysisMode: parsedMode,
+		Operator:     operator,
+		VLAN:         *vlanFlag,
+		BootAt:       time.Now(),
+	})
+    if _, err := p.Run(); err != nil {
+        fmt.Printf("Error: %v", err)
+        os.Exit(1)
+	}
+
 }
 
-func (server ServerConnection) FetchLatest() (createConnection.TelemetryFrame, error) {
-	return createConnection.TelemetryFrame{
+func (server ServerConnection) FetchLatest() (connection.TelemetryFrame, error) {
+	return connection.TelemetryFrame{
 		SourceID: "M4C-GENERIC-NODE",
-		Level:    createConnection.Secure,
+		Level:    connection.Secure,
 		Data:     "HEARTBEAT_SIGNAL_STABLE",
 		Latency:  time.Millisecond * 20,
 	}, nil
@@ -82,22 +117,22 @@ func (server ServerConnection) FetchLatest() (createConnection.TelemetryFrame, e
 func(server ServerConnection) DetectConnection() (string, bool, error) {
 	fmt.Printf("[EYE IN THE SKY] Looking for USB at %s...\n", server.USBAddr)
 
-	usbAvailable, err := createConnection.CheckUSB(server.USBAddr)
+	usbAvailable, err := connection.CheckUSB(server.USBAddr)
 
-	if usbAvailable == int(createConnection.Secure) {
+	if usbAvailable == int(connection.Secure) {
 		return "PHYSICAL_USB", true, nil
-	} else if usbAvailable == int(createConnection.Unsecure) {
+	} else if usbAvailable == int(connection.Unsecure) {
 		return "PHYSICAL_USB", false, nil
 	}
 
 	fmt.Println(err)
 	fmt.Printf("[EYE IN THE SKY] looking for ssh connection at %s..\n", server.IPAddr)
 
-	netStatus := createConnection.CheckNetwork(server.IPAddr)
+	netStatus := connection.CheckNetwork(server.IPAddr)
 
-	if netStatus == int(createConnection.Secure) {
+	if netStatus == int(connection.Secure) {
 		return "NETWORK_SSH", true, nil
-	} else if netStatus == int(createConnection.Unsecure) {
+	} else if netStatus == int(connection.Unsecure) {
 		return "NETWORK_SSH", false, nil
 	}
 
@@ -105,15 +140,24 @@ func(server ServerConnection) DetectConnection() (string, bool, error) {
 
 }
 
-func filterUnsecure(frames []createConnection.TelemetryFrame) []createConnection.TelemetryFrame{
+func filterUnsecure(frames []connection.TelemetryFrame) []connection.TelemetryFrame{
 	
-	var unsecureFrame []createConnection.TelemetryFrame
+	var unsecureFrame []connection.TelemetryFrame
 
 	for _,f := range frames{
-		if f.Level == createConnection.Unsecure {
+		if f.Level == connection.Unsecure {
 			unsecureFrame = append(unsecureFrame,f)
 		}
 	}
 	return unsecureFrame
+}
+
+func parseTrustLevel(value string) connection.TrustLevel {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case "secure", "s", "trusted":
+		return connection.Secure
+	default:
+		return connection.Unsecure
+	}
 }
 

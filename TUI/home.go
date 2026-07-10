@@ -44,7 +44,7 @@ const sigilASCII = `
 =========================EYE IN THE SKY
 `
 
-func (m Model) welcomeView() string {
+func renderHome(m Model) string {
 	operator := m.Operator
 	if operator == "" {
 		operator = "operator"
@@ -60,8 +60,7 @@ func (m Model) welcomeView() string {
 		titleStyle.Render("WELCOME OPERATOR"),
 		sigilASCII,
 		operator,
-		m.modeLabel(),
-		m.uptime(),
+		m.Uptime,
 	)
 
 rightContent := fmt.Sprintf(
