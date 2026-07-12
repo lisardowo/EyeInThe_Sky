@@ -36,10 +36,9 @@ func renderDash(state DashState) string {
 	
 	topHalfHeight := (state.TerminalHeight / 2) - 2
 	bottomHalfHeight := (state.TerminalHeight / 2) - 2
-	
-	leftPanelWidth := (state.TerminalWidth / 3) - 2
-	rightPanelWidth := ((state.TerminalWidth * 2) / 3) - 2
 
+	panelAwidth := (state.TerminalWidth / 2) - 2
+	//panelBwidth := (state.TerminalWidth / 2) - 2
 	
 	var activeBorderColor lipgloss.Color
 	if state.IsSecure {
@@ -57,7 +56,7 @@ func renderDash(state DashState) string {
 	telemetryStyle := lipgloss.NewStyle().
 		Border(telemetryBorder).
 		BorderForeground(ifThenColor(state.FocusedPanel == "telemetry", activeBorderColor, colorMuted)).
-		Width(leftPanelWidth).
+		Width(panelAwidth).
 		Height(topHalfHeight).
 		Padding(1)
 
@@ -71,8 +70,8 @@ func renderDash(state DashState) string {
 		headerStyle.Render("SYSTEM METRICS"),
 		statusStr,
 		headerStyle.Render("RESOURCES"),
-		renderProgressBar(state.CPUUsage, leftPanelWidth-10), state.CPUUsage,
-		renderProgressBar(state.RAMUsage, leftPanelWidth-10), state.RAMUsage,
+		renderProgressBar(state.CPUUsage, panelAwidth-10), state.CPUUsage,
+		renderProgressBar(state.RAMUsage, panelAwidth-10), state.RAMUsage,
 	)
 
 	// PANEL B
@@ -84,7 +83,7 @@ func renderDash(state DashState) string {
 	commandsStyle := lipgloss.NewStyle().
 		Border(commandsBorder).
 		BorderForeground(ifThenColor(state.FocusedPanel == "commands", activeBorderColor, colorMuted)).
-		Width(rightPanelWidth).
+		Width(panelAwidth).
 		Height(topHalfHeight).
 		Padding(1)
 
@@ -165,7 +164,6 @@ func renderDash(state DashState) string {
 
 	return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
 
-	//return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
 }
 
 // HELP

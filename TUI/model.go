@@ -51,7 +51,7 @@ func (m Model) View() string {
 
     debugArray := []string{"mock", "mock", "mock", "mock"} //TODO delete
     return renderDash(DashState{
-    TerminalWidth:  50,
+    TerminalWidth:  150,
 	TerminalHeight: 13,
 	IsSecure:       true,
 	FocusedPanel:   "telemetry",   // "telemetry", "commands", "logs"
