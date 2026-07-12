@@ -7,7 +7,8 @@ import (
 	"fmt"
 	"os"
 	"os/user"
-	"strings"
+
+	//"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -21,9 +22,10 @@ type ServerConnection struct {
 var analysisMode connection.TrustLevel = connection.Unsecure // TODO HARCORDED VALUE
 
 func main() {
-	fmt.Print("sexo")
 
-	modeFlag := flag.String("mode", analysisMode.String(), "analysis mode: secure or unsecure")
+	fmt.Printf("sexo")
+
+	//modeFlag := flag.String("mode", analysisMode.String(), "analysis mode: secure or unsecure")
 	operatorFlag := flag.String("operator", "", "operator name shown in the TUI")
 	vlanFlag := flag.Int("vlan", 10, "VLAN identifier shown in the TUI")
 	flag.Parse()
@@ -37,7 +39,7 @@ func main() {
 		}
 	}
 
-	parsedMode := parseTrustLevel(*modeFlag)
+	//parsedMode := parseTrustLevel(*modeFlag)
 
 
 	/*currentLabFrame := TelemetryFrame{
@@ -96,7 +98,7 @@ func main() {
 		startTime := time.Now()
 
 	    p := tea.NewProgram(tui.Model{
-		AnalysisMode: parsedMode,
+		AnalysisMode: connection.Secure,//TODO HARDCODEDparsedMode,
 		Operator:     operator,
 		VLAN:         *vlanFlag,
 		BootAt:       startTime,
@@ -109,60 +111,3 @@ func main() {
 	}
 
 }
-
-func (server ServerConnection) FetchLatest() (connection.TelemetryFrame, error) {
-	return connection.TelemetryFrame{
-		SourceID: "M4C-GENERIC-NODE",
-		Level:    connection.Secure,
-		Data:     "HEARTBEAT_SIGNAL_STABLE",
-		Latency:  time.Millisecond * 20,
-	}, nil
-}
-
-func(server ServerConnection) DetectConnection() (string, bool, error) {
-	fmt.Printf("[EYE IN THE SKY] Looking for USB at %s...\n", server.USBAddr)
-
-	usbAvailable, err := connection.CheckUSB(server.USBAddr)
-
-	if usbAvailable == int(connection.Secure) {
-		return "PHYSICAL_USB", true, nil
-	} else if usbAvailable == int(connection.Unsecure) {
-		return "PHYSICAL_USB", false, nil
-	}
-
-	fmt.Println(err)
-	fmt.Printf("[EYE IN THE SKY] looking for ssh connection at %s..\n", server.IPAddr)
-
-	netStatus := connection.CheckNetwork(server.IPAddr)
-
-	if netStatus == int(connection.Secure) {
-		return "NETWORK_SSH", true, nil
-	} else if netStatus == int(connection.Unsecure) {
-		return "NETWORK_SSH", false, nil
-	}
-
-	return "", false, fmt.Errorf("[EYE IN THE SKY] node unreachable: all connections failed")
-
-}
-
-func filterUnsecure(frames []connection.TelemetryFrame) []connection.TelemetryFrame{
-	
-	var unsecureFrame []connection.TelemetryFrame
-
-	for _,f := range frames{
-		if f.Level == connection.Unsecure {
-			unsecureFrame = append(unsecureFrame,f)
-		}
-	}
-	return unsecureFrame
-}
-
-func parseTrustLevel(value string) connection.TrustLevel {
-	switch strings.ToLower(strings.TrimSpace(value)) {
-	case "secure", "s", "trusted":
-		return connection.Secure
-	default:
-		return connection.Unsecure
-	}
-}
-
