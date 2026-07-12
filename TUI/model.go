@@ -13,14 +13,14 @@ type Model struct {
     Operator      string
     VLAN          int
     BootAt        time.Time
-    Uptime			string
+    Uptime			time.Duration
     Width, Height         int
             
 }
 
 
 var modelWelcome = Model{Operator: "mock", VLAN: 10, 
-AnalysisMode: connection.TrustLevel(2) , Uptime: "0s", Width:  120, Height: 120 }
+AnalysisMode: connection.TrustLevel(2) , Uptime: 67, Width:  120, Height: 120 }
 // Model is the exported TUI model used by main.
 
 

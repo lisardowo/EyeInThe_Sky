@@ -60,6 +60,7 @@ func renderHome(m Model) string {
 		titleStyle.Render("WELCOME OPERATOR"),
 		sigilASCII,
 		operator,
+		m.AnalysisMode,
 		m.Uptime,
 	)
 

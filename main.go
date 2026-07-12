@@ -21,6 +21,8 @@ type ServerConnection struct {
 var analysisMode connection.TrustLevel = connection.Unsecure // TODO HARCORDED VALUE
 
 func main() {
+	fmt.Print("sexo")
+
 	modeFlag := flag.String("mode", analysisMode.String(), "analysis mode: secure or unsecure")
 	operatorFlag := flag.String("operator", "", "operator name shown in the TUI")
 	vlanFlag := flag.Int("vlan", 10, "VLAN identifier shown in the TUI")
@@ -91,12 +93,15 @@ func main() {
 		IPAddr:  "192.168.1.100",
 	}
 	connection.BootNode(pentestNodeSSH) */
+		startTime := time.Now()
 
 	    p := tea.NewProgram(tui.Model{
 		AnalysisMode: parsedMode,
 		Operator:     operator,
 		VLAN:         *vlanFlag,
-		BootAt:       time.Now(),
+		BootAt:       startTime,
+		Uptime:		  time.Since(startTime) ,
+
 	})
     if _, err := p.Run(); err != nil {
         fmt.Printf("Error: %v", err)
