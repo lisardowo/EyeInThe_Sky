@@ -24,7 +24,7 @@ AnalysisMode: connection.TrustLevel(2) , Uptime: 67, Width:  120, Height: 120 }
 
 
 func (m Model) Init() tea.Cmd {
-    return nil
+    return tea.WindowSize()
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -39,7 +39,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         } else if msg.Type == tea.KeyEnter{
             tea.Printf("Ass")
         }
-         
     
     }
 
@@ -58,7 +57,8 @@ func (m Model) View() string {
 	FocusedPanel:   "telemetry",   // "telemetry", "commands", "logs"
 	CPUUsage:       89.5,
 	RAMUsage:       95.2,
-	LogsBuffer:     debugArray,} )
+	LogsBuffer:     debugArray,
+    Width:         120,} )
 }
 
 func (m Model) uptime() string {

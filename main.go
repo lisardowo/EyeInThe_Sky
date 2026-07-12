@@ -96,15 +96,18 @@ func main() {
 	}
 	connection.BootNode(pentestNodeSSH) */
 		startTime := time.Now()
-
-	    p := tea.NewProgram(tui.Model{
+		initialModel := tui.Model{
 		AnalysisMode: connection.Secure,//TODO HARDCODEDparsedMode,
 		Operator:     operator,
 		VLAN:         *vlanFlag,
 		BootAt:       startTime,
 		Uptime:		  time.Since(startTime) ,
 
-	})
+	}
+	
+	p := tea.NewProgram(initialModel, tea.WithAltScreen(), 
+)
+
     if _, err := p.Run(); err != nil {
         fmt.Printf("Error: %v", err)
         os.Exit(1)

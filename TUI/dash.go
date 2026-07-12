@@ -29,6 +29,7 @@ type DashState struct {
 	CPUUsage       float64
 	RAMUsage       float64
 	LogsBuffer     []string
+	Width			int
 }
 
 func renderDash(state DashState) string {
@@ -123,12 +124,48 @@ func renderDash(state DashState) string {
 		strings.Join(state.LogsBuffer, "\n"),
 	)
 
-	
 	topHalf := lipgloss.JoinHorizontal(lipgloss.Top, telemetryStyle.Render(panelAContent), commandsStyle.Render(panelBContent))
-	
 	bottomHalf := logsStyle.Render(logsContent)
 
+	availableWidth := state.Width
+	if availableWidth <= 0 {
+		availableWidth = 120
+	}
+	minPaneWidth := 28
+	gap := 2
+	stacked := availableWidth < 90
+
+	leftWidth := availableWidth - 4
+	rightWidth := leftWidth - 4
+	if !stacked {
+		leftWidth = int(float64(availableWidth) * 0.58)
+		rightWidth = availableWidth - leftWidth - gap - 6
+		if leftWidth < 34 {
+			leftWidth = 34
+		}
+		if rightWidth < 24 {
+			rightWidth = 24 - 6
+		}
+		if leftWidth+rightWidth+gap > availableWidth {
+			rightWidth = availableWidth - leftWidth - gap - 6
+		}
+		if rightWidth < minPaneWidth {
+			rightWidth = minPaneWidth
+		}
+	} else {
+		if leftWidth < minPaneWidth {
+			leftWidth = minPaneWidth
+		}
+		rightWidth = leftWidth - 6
+	}
+
+	if stacked {
+		return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
+	}
+
 	return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
+
+	//return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
 }
 
 // HELP
