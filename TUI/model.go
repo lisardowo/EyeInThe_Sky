@@ -2,7 +2,6 @@ package TUI
 
 import (
 	connection "EyeInThe_Sky/createConnection"
-	"fmt"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -44,7 +43,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-    return m.modeLabel()
+    return renderHome(m)
 }
 
 func (m Model) uptime() string {
@@ -55,6 +54,4 @@ func (m Model) uptime() string {
     return time.Since(m.BootAt).Truncate(time.Second).String()
 }
 
-func (m Model) modeLabel() string {
-    return fmt.Sprintf("%s", m.AnalysisMode)
-}
+
