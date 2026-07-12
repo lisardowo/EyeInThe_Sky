@@ -36,14 +36,29 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
     case tea.KeyMsg:
         if msg.Type == tea.KeyCtrlQ {
             return m, tea.Quit
+        } else if msg.Type == tea.KeyEnter{
+            tea.Printf("Ass")
         }
+         
+    
     }
 
     return m, nil
 }
 
+
 func (m Model) View() string {
-    return renderHome(m)
+    // return renderHome(m) home view
+
+    debugArray := []string{"mock", "mock", "mock", "mock"} //TODO delete
+    return renderDash(DashState{
+    TerminalWidth:  50,
+	TerminalHeight: 13,
+	IsSecure:       true,
+	FocusedPanel:   "telemetry",   // "telemetry", "commands", "logs"
+	CPUUsage:       89.5,
+	RAMUsage:       95.2,
+	LogsBuffer:     debugArray,} )
 }
 
 func (m Model) uptime() string {

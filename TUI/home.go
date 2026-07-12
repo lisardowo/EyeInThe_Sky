@@ -41,7 +41,7 @@ const sigilASCII = `
 		   /   // \     \
 		  /   //   \     \
 		 /   /'     '     '
-=========================EYE IN THE SKY
+=========================  EYE IN THE SKY
 `
 
 func renderHome(m Model) string {
