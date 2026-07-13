@@ -7,6 +7,20 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+const (
+    
+    homeScreen int = iota // TODO Typedef the int as a screen.. ?
+    dashScreen       
+)
+
+
+type mainModel struct{ 
+    currentMode     int // int representing home(0) or dash(1)
+    home            int
+    dash            int``
+
+}
+
 type Model struct {
     AnalysisMode connection.TrustLevel
     Operator      string
@@ -37,6 +51,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         return m, nil
     case tea.KeyMsg:
 
+        debugArray := []string{"mock", "mock", "mock", "mock"} //TODO delete
         m.lastKey = msg.String()
 
         //this reads a signal to force quit the program in case anything happens
@@ -44,11 +59,23 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         if msg.Type == tea.KeyCtrlQ {
             return m, tea.Quit
         } 
-        
+        dash := DashState {TerminalWidth:  150,
+	TerminalHeight: 13,
+	IsSecure:       true,
+	FocusedPanel:   "telemetry",   // "telemetry", "commands", "logs" | Maybe use and enum, when h (-1), l (+1) regenerate each time that keys are pressed 
+	CPUUsage:       89.5,
+	RAMUsage:       95.2,
+	LogsBuffer:     debugArray,
+    Width:         120,}
         switch msg.String(){
-            case "h"
-            case "l"
-            case "enter"
+            case "h":
+            
+            case "l":
+            
+            case "enter":
+                 // workin
+                renderDash(mainModel.dash)
+                return dash, nil  
         }
     
     }
