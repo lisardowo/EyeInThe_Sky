@@ -14,6 +14,8 @@ type Model struct {
     BootAt        time.Time
     Uptime			time.Duration
     Width, Height         int
+    lastKey             string
+    lastAction          string // TODO debug variable
             
 }
 
@@ -34,10 +36,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         m.Height = msg.Height
         return m, nil
     case tea.KeyMsg:
+
+        m.lastKey = msg.String()
+
+        //this reads a signal to force quit the program in case anything happens
+        
         if msg.Type == tea.KeyCtrlQ {
             return m, tea.Quit
-        } else if msg.Type == tea.KeyEnter{
-            tea.Printf("Ass")
+        } 
+        
+        switch msg.String(){
+            case "h"
+            case "l"
+            case "enter"
         }
     
     }
@@ -47,18 +58,21 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 
 func (m Model) View() string {
-    // return renderHome(m) home view
-
-    debugArray := []string{"mock", "mock", "mock", "mock"} //TODO delete
+    return renderHome(m) //TODO debug home view
+    // TODO harcorded debug dash model
+    /* debugArray := []string{"mock", "mock", "mock", "mock"} //TODO delete
     return renderDash(DashState{
     TerminalWidth:  150,
 	TerminalHeight: 13,
 	IsSecure:       true,
-	FocusedPanel:   "telemetry",   // "telemetry", "commands", "logs"
+	FocusedPanel:   "telemetry",   // "telemetry", "commands", "logs" | Maybe use and enum, when h (-1), l (+1) regenerate each time that keys are pressed 
 	CPUUsage:       89.5,
 	RAMUsage:       95.2,
 	LogsBuffer:     debugArray,
-    Width:         120,} )
+    Width:         120,} ) */
+
+    
+
 }
 
 func (m Model) uptime() string {
