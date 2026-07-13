@@ -29,7 +29,7 @@ type DashState struct {
 	CPUUsage       float64
 	RAMUsage       float64
 	LogsBuffer     []string
-	Width			int
+	Width			int // TODO is width repeated?
 }
 
 func renderDash(state DashState) string {
