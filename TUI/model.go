@@ -59,12 +59,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch msg.String() {
     		case "l":
-				if (m.Dash.FocusedPanel <= 3){
-					m.Dash.FocusedPanel = 0
-				} else {
-					m.Dash.FocusedPanel += 1
-				}
+				if (m.Dash.FocusedPanel >= 3){
+					m.Dash.FocusedPanel = 1
+				} 
+				m.Dash.FocusedPanel += 1
 			case "h":
+				if (m.Dash.FocusedPanel >= 3){
+					m.Dash.FocusedPanel = 3
+				} 
 				m.Dash.FocusedPanel -= 1
 			default: 
 		}
