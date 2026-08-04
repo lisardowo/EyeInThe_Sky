@@ -36,7 +36,6 @@ type HomeState struct {
 	VLAN         int
 	BootAt       time.Time
 	Uptime       time.Duration
-	Width, Height int
 	currentMode  int
 	
 }
@@ -58,7 +57,7 @@ const sigilASCII = `
 =========================  EYE IN THE SKY
 `
 
-func renderHome(m HomeState) string {
+func renderHome(m HomeState, TerminalHeight int, TerminalWidth int) string {
 	operator := m.Operator
 	if operator == "" {
 		operator = "operator"
@@ -111,7 +110,7 @@ rightContent := fmt.Sprintf(
 	)
 
 
-	availableWidth := m.Width
+	availableWidth := TerminalWidth
 	if availableWidth <= 0 {
 		availableWidth = 120
 	}

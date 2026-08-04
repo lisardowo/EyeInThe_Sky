@@ -22,7 +22,6 @@ var analysisMode connection.TrustLevel = connection.Unsecure // TODO HARCORDED V
 
 func main() {
 
-	fmt.Printf("sexo")
 
 	//modeFlag := flag.String("mode", analysisMode.String(), "analysis mode: secure or unsecure")
 	operatorFlag := flag.String("operator", "", "operator name shown in the TUI")

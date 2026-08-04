@@ -30,8 +30,6 @@ const (
 )
 
 type DashState struct {
-	TerminalWidth  int
-	TerminalHeight int
 	IsSecure       bool
 	FocusedPanel   FocusPanel
 	CPUUsage       float64
@@ -42,12 +40,12 @@ type DashState struct {
 	
 }
 
-func renderDash(state DashState) string {
+func renderDash(state DashState, TerminalHeight int, TerminalWidth int) string {
 	
-	topHalfHeight := (state.TerminalHeight / 2) - 2
-	bottomHalfHeight := (state.TerminalHeight / 2) - 2
+	topHalfHeight := (TerminalHeight / 2) - 2
+	bottomHalfHeight := (TerminalHeight / 2) - 2
 
-	panelAwidth := (state.TerminalWidth / 2) - 2
+	panelAwidth := (TerminalWidth / 2) - 2
 	//panelBwidth := (state.TerminalWidth / 2) - 2
 	
 	var activeBorderColor lipgloss.Color
@@ -123,7 +121,7 @@ func renderDash(state DashState) string {
 	logsStyle := lipgloss.NewStyle().
 		Border(logsBorder).
 		BorderForeground(ifThenColor(state.FocusedPanel == PanelLogs, activeBorderColor, colorMuted)).
-		Width(state.TerminalWidth - 2).
+		Width(TerminalWidth - 2).
 		Height(bottomHalfHeight).
 		Padding(0, 1)
 

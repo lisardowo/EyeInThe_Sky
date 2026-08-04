@@ -77,8 +77,8 @@ func (m Model) View() string {
 	m.Home.Uptime = time.Since(m.Home.BootAt)
 
 	if m.CurrentMode == dashScreen {
-		return renderDash(m.Dash)
+		return renderDash(m.Dash, m.Height, m.Width)
 	}
 
-	return renderHome(m.Home)
+	return renderHome(m.Home, m.Height, m.Width)
 }
