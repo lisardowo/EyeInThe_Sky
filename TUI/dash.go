@@ -7,6 +7,8 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+type FocusPanel int
+
 var (
 	// TODO TEST FILE MOVE TO GENERAL FILE TO REUSE
 	colorSecure   = lipgloss.Color("#5F00FF") // 
@@ -21,15 +23,23 @@ var (
 			Underline(true)
 )
 
+const (
+    PanelTelemetry FocusPanel = iota
+    PanelCommands
+    PanelLogs
+)
+
 type DashState struct {
 	TerminalWidth  int
 	TerminalHeight int
 	IsSecure       bool
-	FocusedPanel   string   // "telemetry", "commands", "logs"
+	FocusedPanel   FocusPanel
 	CPUUsage       float64
 	RAMUsage       float64
 	LogsBuffer     []string
 	Width			int // TODO is width repeated?
+
+	
 }
 
 func renderDash(state DashState) string {
@@ -49,13 +59,13 @@ func renderDash(state DashState) string {
 
 	// PANEL A
 	telemetryBorder := lipgloss.NormalBorder()
-	if state.FocusedPanel == "telemetry" {
+	if state.FocusedPanel == PanelTelemetry {
 		telemetryBorder = lipgloss.DoubleBorder()
 	}
 	
 	telemetryStyle := lipgloss.NewStyle().
 		Border(telemetryBorder).
-		BorderForeground(ifThenColor(state.FocusedPanel == "telemetry", activeBorderColor, colorMuted)).
+		BorderForeground(ifThenColor(state.FocusedPanel == PanelTelemetry, activeBorderColor, colorMuted)).
 		Width(panelAwidth).
 		Height(topHalfHeight).
 		Padding(1)
@@ -76,13 +86,13 @@ func renderDash(state DashState) string {
 
 	// PANEL B
 	commandsBorder := lipgloss.NormalBorder()
-	if state.FocusedPanel == "commands" {
+	if state.FocusedPanel == PanelCommands {
 		commandsBorder = lipgloss.DoubleBorder()
 	}
 
 	commandsStyle := lipgloss.NewStyle().
 		Border(commandsBorder).
-		BorderForeground(ifThenColor(state.FocusedPanel == "commands", activeBorderColor, colorMuted)).
+		BorderForeground(ifThenColor(state.FocusedPanel == PanelCommands, activeBorderColor, colorMuted)).
 		Width(panelAwidth).
 		Height(topHalfHeight).
 		Padding(1)
@@ -106,13 +116,13 @@ func renderDash(state DashState) string {
 
 	// PANEL C
 	logsBorder := lipgloss.NormalBorder()
-	if state.FocusedPanel == "logs" {
+	if state.FocusedPanel == PanelLogs {
 		logsBorder = lipgloss.DoubleBorder()
 	}
 
 	logsStyle := lipgloss.NewStyle().
 		Border(logsBorder).
-		BorderForeground(ifThenColor(state.FocusedPanel == "logs", activeBorderColor, colorMuted)).
+		BorderForeground(ifThenColor(state.FocusedPanel == PanelLogs, activeBorderColor, colorMuted)).
 		Width(state.TerminalWidth - 2).
 		Height(bottomHalfHeight).
 		Padding(0, 1)

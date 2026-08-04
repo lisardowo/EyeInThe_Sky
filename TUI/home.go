@@ -1,7 +1,9 @@
 package TUI
 
 import (
+	connection "EyeInThe_Sky/createConnection"
 	"fmt"
+	"time"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -27,6 +29,18 @@ var (
 
 )
 
+type HomeState struct {
+
+	AnalysisMode connection.TrustLevel
+	Operator     string
+	VLAN         int
+	BootAt       time.Time
+	Uptime       time.Duration
+	Width, Height int
+	currentMode  int
+	
+}
+
 const sigilASCII = `
  		      .      .     .
      		   \    /   //
@@ -44,7 +58,7 @@ const sigilASCII = `
 =========================  EYE IN THE SKY
 `
 
-func renderHome(m Model) string {
+func renderHome(m HomeState) string {
 	operator := m.Operator
 	if operator == "" {
 		operator = "operator"
