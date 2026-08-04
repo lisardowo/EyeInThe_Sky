@@ -9,7 +9,6 @@ import (
 	"os/user"
 
 	//"strings"
-	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -27,7 +26,7 @@ func main() {
 
 	//modeFlag := flag.String("mode", analysisMode.String(), "analysis mode: secure or unsecure")
 	operatorFlag := flag.String("operator", "", "operator name shown in the TUI")
-	vlanFlag := flag.Int("vlan", 10, "VLAN identifier shown in the TUI")
+	//vlanFlag := flag.Int("vlan", 10, "VLAN identifier shown in the TUI")
 	flag.Parse()
 
 	operator := *operatorFlag
@@ -95,13 +94,15 @@ func main() {
 		IPAddr:  "192.168.1.100",
 	}
 	connection.BootNode(pentestNodeSSH) */
-		startTime := time.Now()
+		
 		initialModel := tui.Model{
-		AnalysisMode: connection.Secure,//TODO HARDCODEDparsedMode,
-		Operator:     operator,
-		VLAN:         *vlanFlag,
-		BootAt:       startTime,
-		Uptime:		  time.Since(startTime) ,
+ 			CurrentMode: 0,
+    		Home:        tui.HomeState{},
+    		Dash:        tui.DashState{},
+    		Width:       120,
+	    	Height:      240,
+    		LastKey: "NAN",
+    		LastAction:  "System Booted Up",
 
 	}
 	

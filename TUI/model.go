@@ -16,12 +16,12 @@ const (
 
 
 type Model struct {
-	currentMode int
-	home HomeState
-	dash DashState
+	CurrentMode int
+	Home HomeState
+	Dash DashState
 	Width,Height	int
-	lastKey      string	
-	lastAction   string // Last change
+	LastKey      string	
+	LastAction   string // Last change
 }
 
 
@@ -39,7 +39,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Height = msg.Height
 		return m, nil
 	case tea.KeyMsg:
-		m.lastKey = msg.String()
+		m.LastKey = msg.String()
 
 		if msg.Type == tea.KeyCtrlQ {
 			return m, tea.Quit
@@ -47,25 +47,25 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch msg.Type {
 		case tea.KeyEnter:
-			m.currentMode = dashScreen
-			m.lastAction = "start handshake"
+			m.CurrentMode = dashScreen
+			m.LastAction = "start handshake"
 			return m, nil
 		case tea.KeyEsc:
-			m.currentMode = homeScreen
-			m.lastAction = "return home"
+			m.CurrentMode = homeScreen
+			m.LastAction = "return home"
 			return m, nil
 		
 		}
 
 		switch msg.String() {
     		case "l":
-				if (m.dash.FocusedPanel <= 3){
-					m.dash.FocusedPanel = 0
+				if (m.Dash.FocusedPanel <= 3){
+					m.Dash.FocusedPanel = 0
 				} else {
-					m.dash.FocusedPanel += 1
+					m.Dash.FocusedPanel += 1
 				}
 			case "h":
-				m.dash.FocusedPanel -= 1
+				m.Dash.FocusedPanel -= 1
 			default: 
 		}
 	}
@@ -74,11 +74,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	m.home.Uptime = time.Since(m.home.BootAt)
+	m.Home.Uptime = time.Since(m.Home.BootAt)
 
-	if m.currentMode == dashScreen {
-		return renderDash(m.dash)
+	if m.CurrentMode == dashScreen {
+		return renderDash(m.Dash)
 	}
 
-	return renderHome(m.home)
+	return renderHome(m.Home)
 }
