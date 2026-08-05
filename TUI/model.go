@@ -2,6 +2,7 @@ package TUI
 
 import (
 	//connection "EyeInThe_Sky/createConnection"
+	"fmt"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -59,8 +60,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch msg.String() {
     		case "l":
+				currentValueBefore := fmt.Sprintf("currentValue After first 3 L : %d", m.Dash.FocusedPanel)
+				m.Dash.LogsBuffer = append(m.Dash.LogsBuffer, currentValueBefore)
 				if (m.Dash.FocusedPanel >= 3){
-					m.Dash.FocusedPanel = 1
+					m.Dash.FocusedPanel = 0
+					currentValueAfter := fmt.Sprintf("currentValue After first 3 L : %d", m.Dash.FocusedPanel)
+					m.Dash.LogsBuffer = append(m.Dash.LogsBuffer, currentValueAfter)
 				} 
 				m.Dash.FocusedPanel += 1
 			case "h":

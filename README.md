@@ -23,6 +23,8 @@ Current errors Ive found
 
 ** 4 and 5 errors both are debug errors happening because im passing in the main file an empty --debug only-- home and dashboard model
 
+7. The event stream keeps on growing when appending strings blocking the TUI completely, expected behavior is to leave behind old data keeping just fresh logs, the data is not deleted just displaced, when someone explictly enters via command in the log manager window then they can scroll trough the whole log
+
 ## Code Reference
 
 This section is a compact map of the most important types, variables, constants, and functions.
