@@ -62,12 +62,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
     		case "l":
 				currentValueBefore := fmt.Sprintf("currentValue After first 3 L : %d", m.Dash.FocusedPanel)
 				m.Dash.LogsBuffer = append(m.Dash.LogsBuffer, currentValueBefore)
-				if (m.Dash.FocusedPanel >= 3){
-					m.Dash.FocusedPanel = 0
+				if !(m.Dash.FocusedPanel >= 3){
+					m.Dash.FocusedPanel += 1
+				} else
+				{
 					currentValueAfter := fmt.Sprintf("currentValue After first 3 L : %d", m.Dash.FocusedPanel)
 					m.Dash.LogsBuffer = append(m.Dash.LogsBuffer, currentValueAfter)
-				} 
-				m.Dash.FocusedPanel += 1
+					m.Dash.FocusedPanel = 0
+				}
+				
 			case "h":
 				if (m.Dash.FocusedPanel >= 3){
 					m.Dash.FocusedPanel = 3

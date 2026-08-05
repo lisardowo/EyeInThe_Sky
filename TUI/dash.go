@@ -24,9 +24,9 @@ var (
 )
 
 const (
-    PanelTelemetry FocusPanel = iota
-    PanelCommands
-    PanelLogs
+    PanelTelemetry FocusPanel = iota //0
+    PanelCommands //1
+    PanelLogs //2
 )
 
 type DashState struct {
