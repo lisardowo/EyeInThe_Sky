@@ -58,25 +58,35 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		
 		}
 
-		switch msg.String() {
-    		case "l":
-				currentValueBefore := fmt.Sprintf("currentValue After first 3 L : %d", m.Dash.FocusedPanel)
-				m.Dash.LogsBuffer = append(m.Dash.LogsBuffer, currentValueBefore)
-				if !(m.Dash.FocusedPanel >= 3){
-					m.Dash.FocusedPanel += 1
-				} else
-				{
-					currentValueAfter := fmt.Sprintf("currentValue After first 3 L : %d", m.Dash.FocusedPanel)
-					m.Dash.LogsBuffer = append(m.Dash.LogsBuffer, currentValueAfter)
-					m.Dash.FocusedPanel = 0
-				}
+		if(m.CurrentMode == dashScreen){
+			switch msg.String() {
+		
+		
+				case "l":
+					currentValueBefore := fmt.Sprintf("currentValue After first 3 L : %d", m.Dash.FocusedPanel)
+					m.Dash.LogsBuffer = append(m.Dash.LogsBuffer, currentValueBefore)
+					if(m.Dash.FocusedPanel < 2){
+						m.Dash.FocusedPanel += 1
+					} else
+					{
+						currentValueAfter := fmt.Sprintf("currentValue Before first 3 L : %d", m.Dash.FocusedPanel)
+						m.Dash.LogsBuffer = append(m.Dash.LogsBuffer, currentValueAfter)
+						m.Dash.FocusedPanel = 0
+					}
 				
-			case "h":
-				if (m.Dash.FocusedPanel >= 3){
-					m.Dash.FocusedPanel = 3
-				} 
-				m.Dash.FocusedPanel -= 1
-			default: 
+				case "h":
+					currentValueBefore := fmt.Sprintf("currentValue After first 3 h : %d", m.Dash.FocusedPanel)
+					m.Dash.LogsBuffer = append(m.Dash.LogsBuffer, currentValueBefore)
+					if(m.Dash.FocusedPanel == 0){
+						m.Dash.FocusedPanel = 2
+					} else
+					{
+						currentValueAfter := fmt.Sprintf("currentValue Before first 3 h : %d", m.Dash.FocusedPanel)
+						m.Dash.LogsBuffer = append(m.Dash.LogsBuffer, currentValueAfter)
+						m.Dash.FocusedPanel -= 1 
+					}
+				default: 
+			}
 		}
 	}
 

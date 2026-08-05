@@ -97,7 +97,12 @@ func main() {
 		initialModel := tui.Model{
  			CurrentMode: 0,
     		Home:        tui.HomeState{},
-    		Dash:        tui.DashState{},
+    		Dash:        tui.DashState{ IsSecure:     false,
+    		FocusedPanel: 0,
+    		CPUUsage:     67.9,
+    		RAMUsage:    69.8,
+    		LogsBuffer:   nil,
+    		Width:        120 },
     		Width:       120,
 	    	Height:      240,
     		LastKey: "NAN",
