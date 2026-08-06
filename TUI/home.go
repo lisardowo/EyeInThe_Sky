@@ -31,12 +31,12 @@ var (
 
 type HomeState struct {
 
-	AnalysisMode connection.TrustLevel
+	TrustLevel connection.TrustLevel
 	Operator     string
 	VLAN         int
 	BootAt       time.Time
 	Uptime       time.Duration
-	currentMode  int
+	//TODO WhichScreen  int  DELETE
 	
 }
 
@@ -73,7 +73,7 @@ func renderHome(m HomeState, TerminalHeight int, TerminalWidth int) string {
 		titleStyle.Render("WELCOME OPERATOR"),
 		sigilASCII,
 		operator,
-		m.AnalysisMode,
+		m.TrustLevel,
 		m.Uptime,
 	)
 

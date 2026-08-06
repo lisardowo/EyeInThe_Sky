@@ -9,7 +9,7 @@ import (
 type TrustLevel int
 
 const (
-	Secure   TrustLevel = iota
+	Secure   TrustLevel = iota //0s
 	Unsecure
 )
 
@@ -53,7 +53,7 @@ func CheckNetwork(ip string) int {
 }
 
 func BootNode(node SourceNode) { 
-	transport, isSecure, err := node.DetectConnection()
+	transport, TrustLevel, err := node.DetectConnection()
 
     if err != nil {
         fmt.Printf("[EYE IN THE SKY] BOOT ERROR: %v\n", err)
@@ -63,7 +63,7 @@ func BootNode(node SourceNode) {
     fmt.Printf("--------------------------------------\n")
     fmt.Printf("[EYE IN THE SKY] NODE ONLINE | Transport: %s\n", transport)
 
-    if !isSecure {
+    if !TrustLevel {
         fmt.Println("[EYE IN THE SKY] <WARNING> Running in Untrusted Source")
     } else {
         fmt.Println("[EYE IN THE SKY] SECURE CONNECTION ESTABLISHED")

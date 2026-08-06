@@ -14,16 +14,18 @@ This project is just for fun and the sake of learning
 ## Bugs
 
 Current errors Ive found 
-1. Timestamp boot time evaluating to an error number 
+1. ~~ Timestamp boot time evaluating to an error number ~~
 2. Extra width in dashboard parameters..?
 3. Home view does not consider the height of the screen to construct the render while dash does
-4. I think this is more of a debug error but terminal dashboard defaults to unsafe enviroment even tho the home dashboard was marked as safe
-5. Unsafe enviroment does not render resource consumption
-6. In the dashboard view, when moving in between focused menus, if you press either l or h more than 3 times the focused highlight starts to behalf weird, sometimes not focusing the correct screen or sometimes jumping one/not rendering properly
+ 4.~~ i THINK THIS IS MORE OF A DEBUG ERROR BUT TERMINAL DASHBOARD DEFAULTS TO UNSAFE ENVIROMENT EVEN THO THE HOME DASHBOARD WAS MARKED AS SAFE ~~
+5. ~~ UNSAFE ENVIROMENT DOES NOT RENDER RESOURCE CONSUMPTION ~~
+6. ~~ In the dashboard view, when moving in between focused menus, if you press either l or h more than 3 times the focused highlight starts to behalf weird, sometimes not focusing the correct screen or sometimes jumping one/not rendering properly ~~
 
 ** 4 and 5 errors both are debug errors happening because im passing in the main file an empty --debug only-- home and dashboard model
 
 7. The event stream keeps on growing when appending strings blocking the TUI completely, expected behavior is to leave behind old data keeping just fresh logs, the data is not deleted just displaced, when someone explictly enters via command in the log manager window then they can scroll trough the whole log
+
+8. Home screen does not change color between secure and unsecure, dashboard works tho. TrustLevel parameter seems to not be connected what could be problematic
 
 ## Code Reference
 
@@ -38,7 +40,7 @@ Source: [TUI/model.go](TUI/model.go#L18)
 
 ```go
 type Model struct {
-	CurrentMode int
+	WhichScreen int
 	Home        HomeState
 	Dash        DashState
 	Width,Height int
@@ -52,7 +54,7 @@ Source: [TUI/home.go](TUI/home.go#L32)
 
 ```go
 type HomeState struct {
-	AnalysisMode connection.TrustLevel
+	TrustLevel connection.TrustLevel
 	Operator     string
 	VLAN         int
 	BootAt       time.Time
@@ -67,7 +69,7 @@ Source: [TUI/dash.go](TUI/dash.go#L32)
 
 ```go
 type DashState struct {
-	IsSecure     bool
+	TrustLevel     bool
 	FocusedPanel FocusPanel
 	CPUUsage     float64
 	RAMUsage     float64
@@ -92,15 +94,15 @@ const (
 
 ## Constants
 
-### `homeScreen` / `dashScreen` - Screen mode selectors
+### `HomeScreen` / `DashScreen` - Screen mode selectors
 Enumerator representing which view should be rendered.
 The main model reads them in `Update` and `View`.
 Source: [TUI/model.go](TUI/model.go#L10)
 
 ```go
 const (
-	homeScreen int = iota
-	dashScreen
+	HomeScreen int = iota
+	DashScreen
 )
 ```
 
@@ -113,7 +115,7 @@ Source: [main.go](main.go#L23)
 
 ```go
 initialModel := tui.Model{
-	CurrentMode: 0,
+	WhichScreen: 0,
 	Home:        tui.HomeState{},
 	Dash:        tui.DashState{},
 	Width:       120,
@@ -139,7 +141,7 @@ Source: [TUI/model.go](TUI/model.go#L35)
 
 ```go
 case tea.KeyEnter:
-	m.CurrentMode = dashScreen
+	m.WhichScreen = DashScreen
 	m.LastAction = "start handshake"
 	return m, nil
 ```
@@ -150,7 +152,7 @@ This is the routing layer for the whole TUI.
 Source: [TUI/model.go](TUI/model.go#L76)
 
 ```go
-if m.CurrentMode == dashScreen {
+if m.WhichScreen == DashScreen {
 	return renderDash(m.Dash, m.Height, m.Width)
 }
 

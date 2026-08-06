@@ -9,15 +9,15 @@ import (
 )
 
 const (
-	homeScreen int = iota
-	dashScreen
+	HomeScreen int = iota
+	DashScreen
 )
 
 // Main Welcome model with a counter to decide if its either un home or dash
 
 
 type Model struct {
-	CurrentMode int
+	WhichScreen int
 	Home HomeState
 	Dash DashState
 	Width,Height	int
@@ -27,7 +27,7 @@ type Model struct {
 
 
 //var modelWelcome = Model.HomeState{Operator: "mock", VLAN: 10,
-	//AnalysisMode: connection.TrustLevel(2), Uptime: 67, Width: 120, Height: 120} // TODO debug model
+	//TrustLevel: connection.TrustLevel(2), Uptime: 67, Width: 120, Height: 120} // TODO debug model
 
 func (m Model) Init() tea.Cmd {
 	return tea.WindowSize()
@@ -48,17 +48,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch msg.Type {
 		case tea.KeyEnter:
-			m.CurrentMode = dashScreen
+			m.WhichScreen = DashScreen
 			m.LastAction = "start handshake"
 			return m, nil
 		case tea.KeyEsc:
-			m.CurrentMode = homeScreen
+			m.WhichScreen = HomeScreen
 			m.LastAction = "return home"
 			return m, nil
 		
 		}
 
-		if(m.CurrentMode == dashScreen){
+		if(m.WhichScreen == DashScreen){
 			switch msg.String() {
 		
 		
@@ -85,7 +85,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						m.Dash.LogsBuffer = append(m.Dash.LogsBuffer, currentValueAfter)
 						m.Dash.FocusedPanel -= 1 
 					}
-				default: 
+				default: // TODO implement an "warning" notification letter not recognized, this goes over the layout in the corner of commands
 			}
 		}
 	}
@@ -96,7 +96,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() string {
 	m.Home.Uptime = time.Since(m.Home.BootAt)
 
-	if m.CurrentMode == dashScreen {
+	if m.WhichScreen == DashScreen {
 		return renderDash(m.Dash, m.Height, m.Width)
 	}
 

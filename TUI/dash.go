@@ -1,6 +1,7 @@
 package TUI
 
 import (
+	connection "EyeInThe_Sky/createConnection"
 	"fmt"
 	"strings"
 
@@ -30,7 +31,7 @@ const (
 )
 
 type DashState struct {
-	IsSecure       bool
+	TrustLevel       connection.TrustLevel
 	FocusedPanel   FocusPanel
 	CPUUsage       float64
 	RAMUsage       float64
@@ -49,7 +50,7 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int) string {
 	//panelBwidth := (state.TerminalWidth / 2) - 2
 	
 	var activeBorderColor lipgloss.Color
-	if state.IsSecure {
+	if state.TrustLevel == connection.Secure {
 		activeBorderColor = colorSecure
 	} else {
 		activeBorderColor = colorUnsecure
@@ -69,7 +70,7 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int) string {
 		Padding(1)
 
 	statusStr := "SECURE"
-	if !state.IsSecure {
+	if state.TrustLevel == connection.Unsecure {
 		statusStr = " UNSECURE (SANDBOX ACTIVE)"
 	}
 
@@ -97,7 +98,7 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int) string {
 
 	//
 	var commandMenu string
-	if state.IsSecure {
+	if state.TrustLevel == connection.Secure{
 		commandMenu = "> [1] Deploy Update\n> [2] Network Diagnostics\n> [3] Open SSH Terminal Session"
 	} else {
 		commandMenu = lipgloss.NewStyle().Foreground(colorUnsecure).Render(
