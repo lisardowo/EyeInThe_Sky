@@ -27,7 +27,7 @@ Current errors Ive found
 
 8. ~~ Home screen does not change color between secure and unsecure, dashboard works tho. TrustLevel parameter seems to not be connected what could be problematic ~~
 
-9. Home screen still not changing colors
+9. ~~ Home screen still not changing colors ~~
 
 ## Code Reference
 

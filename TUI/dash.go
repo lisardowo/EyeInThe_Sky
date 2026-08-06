@@ -48,13 +48,7 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 
 	panelAwidth := (TerminalWidth / 2) - 2
 	//panelBwidth := (state.TerminalWidth / 2) - 2
-	
-	var activeBorderColor lipgloss.Color
-	if TrustLevel == connection.Secure {
-		activeBorderColor = colorSecure
-	} else {
-		activeBorderColor = colorUnsecure
-	}
+	activeBorderColor := trustBorderColor(TrustLevel)
 
 	// PANEL A
 	telemetryBorder := lipgloss.NormalBorder()
@@ -189,4 +183,11 @@ func renderProgressBar(percent float64, width int) string {
 	if bars < 0 { bars = 0 }
 	if bars > width { bars = width }
 	return strings.Repeat("█", bars) + strings.Repeat(" ", width-bars)
+}
+
+func trustBorderColor(level connection.TrustLevel) lipgloss.Color {
+	if level == connection.Secure {
+		return colorSecure
+	}
+	return colorUnsecure
 }
