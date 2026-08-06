@@ -41,25 +41,25 @@ func main() {
 	bootTime := time.Now()
 		initialModel := tui.Model{
  				WhichScreen: tui.HomeScreen, // Default boot time screen, Maybe add memory to keep track of that.. ?
-    			Home:        tui.HomeState{
-				TrustLevel: connection.Unsecure,
+    			Width:       120,
+	    		Height:      240,
+    			LastKey: "NAN",
+    			LastAction:  "System Booted Up",
+				TrustLevel:     connection.Secure,
+				
+				Home:        tui.HomeState{
     			Operator:     "debug",
     			VLAN:         0,
     			BootAt:       bootTime,
     			Uptime:       time.Since(bootTime),
-   
 				},
+
     			Dash:        tui.DashState{
-				TrustLevel:     connection.Unsecure,
     			FocusedPanel: 0,
     			CPUUsage:     67.9,
     			RAMUsage:    69.8,
     			LogsBuffer:   nil,
     			Width:        120 },
-    			Width:       120,
-	    		Height:      240,
-    			LastKey: "NAN",
-    			LastAction:  "System Booted Up",
 
 	}
 	

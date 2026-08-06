@@ -25,7 +25,9 @@ Current errors Ive found
 
 7. The event stream keeps on growing when appending strings blocking the TUI completely, expected behavior is to leave behind old data keeping just fresh logs, the data is not deleted just displaced, when someone explictly enters via command in the log manager window then they can scroll trough the whole log
 
-8. Home screen does not change color between secure and unsecure, dashboard works tho. TrustLevel parameter seems to not be connected what could be problematic
+8. ~~ Home screen does not change color between secure and unsecure, dashboard works tho. TrustLevel parameter seems to not be connected what could be problematic ~~
+
+9. Home screen still not changing colors
 
 ## Code Reference
 

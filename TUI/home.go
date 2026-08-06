@@ -31,7 +31,6 @@ var (
 
 type HomeState struct {
 
-	TrustLevel connection.TrustLevel
 	Operator     string
 	VLAN         int
 	BootAt       time.Time
@@ -57,7 +56,7 @@ const sigilASCII = `
 =========================  EYE IN THE SKY
 `
 
-func renderHome(m HomeState, TerminalHeight int, TerminalWidth int) string {
+func renderHome(m HomeState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel) string {
 	operator := m.Operator
 	if operator == "" {
 		operator = "operator"
@@ -73,7 +72,7 @@ func renderHome(m HomeState, TerminalHeight int, TerminalWidth int) string {
 		titleStyle.Render("WELCOME OPERATOR"),
 		sigilASCII,
 		operator,
-		m.TrustLevel,
+		TrustLevel,
 		m.Uptime,
 	)
 

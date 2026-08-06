@@ -31,7 +31,7 @@ const (
 )
 
 type DashState struct {
-	TrustLevel       connection.TrustLevel
+
 	FocusedPanel   FocusPanel
 	CPUUsage       float64
 	RAMUsage       float64
@@ -41,7 +41,7 @@ type DashState struct {
 	
 }
 
-func renderDash(state DashState, TerminalHeight int, TerminalWidth int) string {
+func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel) string {
 	
 	topHalfHeight := (TerminalHeight / 2) - 2
 	bottomHalfHeight := (TerminalHeight / 2) - 2
@@ -50,7 +50,7 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int) string {
 	//panelBwidth := (state.TerminalWidth / 2) - 2
 	
 	var activeBorderColor lipgloss.Color
-	if state.TrustLevel == connection.Secure {
+	if TrustLevel == connection.Secure {
 		activeBorderColor = colorSecure
 	} else {
 		activeBorderColor = colorUnsecure
@@ -70,7 +70,7 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int) string {
 		Padding(1)
 
 	statusStr := "SECURE"
-	if state.TrustLevel == connection.Unsecure {
+	if TrustLevel == connection.Unsecure {
 		statusStr = " UNSECURE (SANDBOX ACTIVE)"
 	}
 
@@ -98,7 +98,7 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int) string {
 
 	//
 	var commandMenu string
-	if state.TrustLevel == connection.Secure{
+	if TrustLevel == connection.Secure{
 		commandMenu = "> [1] Deploy Update\n> [2] Network Diagnostics\n> [3] Open SSH Terminal Session"
 	} else {
 		commandMenu = lipgloss.NewStyle().Foreground(colorUnsecure).Render(

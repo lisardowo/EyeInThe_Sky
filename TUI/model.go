@@ -2,6 +2,7 @@ package TUI
 
 import (
 	//connection "EyeInThe_Sky/createConnection"
+	connection "EyeInThe_Sky/createConnection"
 	"fmt"
 	"time"
 
@@ -18,11 +19,12 @@ const (
 
 type Model struct {
 	WhichScreen int
-	Home HomeState
-	Dash DashState
+	TrustLevel connection.TrustLevel
 	Width,Height	int
 	LastKey      string	
 	LastAction   string // Last change
+	Home HomeState
+	Dash DashState
 }
 
 
@@ -97,8 +99,8 @@ func (m Model) View() string {
 	m.Home.Uptime = time.Since(m.Home.BootAt)
 
 	if m.WhichScreen == DashScreen {
-		return renderDash(m.Dash, m.Height, m.Width)
+		return renderDash(m.Dash, m.Height, m.Width, m.TrustLevel)
 	}
 
-	return renderHome(m.Home, m.Height, m.Width)
+	return renderHome(m.Home, m.Height, m.Width, m.TrustLevel)
 }
