@@ -48,7 +48,7 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 
 	panelAwidth := (TerminalWidth / 2) - 2
 	//panelBwidth := (state.TerminalWidth / 2) - 2
-	activeBorderColor := trustBorderColor(TrustLevel)
+	activeBorderColor := TrustBorderColor(TrustLevel)
 
 	// PANEL A
 	telemetryBorder := lipgloss.NormalBorder()
@@ -58,7 +58,7 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 	
 	telemetryStyle := lipgloss.NewStyle().
 		Border(telemetryBorder).
-		BorderForeground(ifThenColor(state.FocusedPanel == PanelTelemetry, activeBorderColor, colorMuted)).
+		BorderForeground(onFocus(state.FocusedPanel == PanelTelemetry, activeBorderColor, colorMuted)).
 		Width(panelAwidth).
 		Height(topHalfHeight).
 		Padding(1)
@@ -85,7 +85,7 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 
 	commandsStyle := lipgloss.NewStyle().
 		Border(commandsBorder).
-		BorderForeground(ifThenColor(state.FocusedPanel == PanelCommands, activeBorderColor, colorMuted)).
+		BorderForeground(onFocus(state.FocusedPanel == PanelCommands, activeBorderColor, colorMuted)).
 		Width(panelAwidth).
 		Height(topHalfHeight).
 		Padding(1)
@@ -115,7 +115,7 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 
 	logsStyle := lipgloss.NewStyle().
 		Border(logsBorder).
-		BorderForeground(ifThenColor(state.FocusedPanel == PanelLogs, activeBorderColor, colorMuted)).
+		BorderForeground(onFocus(state.FocusedPanel == PanelLogs, activeBorderColor, colorMuted)).
 		Width(TerminalWidth - 2).
 		Height(bottomHalfHeight).
 		Padding(0, 1)
@@ -171,11 +171,11 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 
 // HELP
 
-func ifThenColor(cond bool, t, f lipgloss.Color) lipgloss.Color {
-	if cond {
-		return t
+func onFocus(isFocused bool, focused, notFocused lipgloss.Color) lipgloss.Color { // color if focussed
+	if isFocused {
+		return focused
 	}
-	return f
+	return notFocused
 }
 
 func renderProgressBar(percent float64, width int) string {
@@ -185,9 +185,3 @@ func renderProgressBar(percent float64, width int) string {
 	return strings.Repeat("█", bars) + strings.Repeat(" ", width-bars)
 }
 
-func trustBorderColor(level connection.TrustLevel) lipgloss.Color {
-	if level == connection.Secure {
-		return colorSecure
-	}
-	return colorUnsecure
-}

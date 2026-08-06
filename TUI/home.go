@@ -142,7 +142,7 @@ rightContent := fmt.Sprintf(
 		rightWidth = leftWidth - 6
 	}
 
-	borderColor := trustBorderColor(TrustLevel)
+	borderColor := TrustBorderColor(TrustLevel)
 	leftStyle := leftBoxStyle.BorderForeground(borderColor).Width(leftWidth)
 	rightStyle := rightBoxStyle.BorderForeground(borderColor).Width(rightWidth)
 	

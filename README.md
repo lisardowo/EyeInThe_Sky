@@ -21,13 +21,15 @@ Current errors Ive found
 5. ~~ UNSAFE ENVIROMENT DOES NOT RENDER RESOURCE CONSUMPTION ~~
 6. ~~ In the dashboard view, when moving in between focused menus, if you press either l or h more than 3 times the focused highlight starts to behalf weird, sometimes not focusing the correct screen or sometimes jumping one/not rendering properly ~~
 
-** 4 and 5 errors both are debug errors happening because im passing in the main file an empty --debug only-- home and dashboard model
+** 4 and 5 errors both were debug errors happening because i was passing in the main file an empty --debug only-- home and dashboard model
 
 7. The event stream keeps on growing when appending strings blocking the TUI completely, expected behavior is to leave behind old data keeping just fresh logs, the data is not deleted just displaced, when someone explictly enters via command in the log manager window then they can scroll trough the whole log
 
 8. ~~ Home screen does not change color between secure and unsecure, dashboard works tho. TrustLevel parameter seems to not be connected what could be problematic ~~
 
 9. ~~ Home screen still not changing colors ~~
+
+10. The Time counter just updates when interacted with the TUI which is weird, implement the counter as a goroutine and reduce the amount of seconds displayed 
 
 ## Code Reference
 
@@ -187,13 +189,13 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int) string {
 }
 ```
 
-### `ifThenColor` - Small conditional color helper
+### `onFocus` - Small conditional color helper
 Returns one color when the condition is true, another when false.
 Used by the dashboard to keep border colors readable.
 Source: [TUI/dash.go](TUI/dash.go#L179)
 
 ```go
-func ifThenColor(cond bool, t, f lipgloss.Color) lipgloss.Color {
+func onFocus(cond bool, t, f lipgloss.Color) lipgloss.Color {
 	if cond {
 		return t
 	}
