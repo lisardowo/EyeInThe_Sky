@@ -32,10 +32,7 @@ type Model struct {
 	//TrustLevel: connection.TrustLevel(2), Uptime: 67, Width: 120, Height: 120} // TODO debug model
 
 func (m Model) Init() tea.Cmd {
-	/* BootUp := time.Now()
-	var UptimeTimer chan time.Duration
-	UptimeTimer = make(chan time.Duration)
-	UptimeHandle(BootUp, UptimeTimer) */
+	
 	//TODO Create channel for timer logic -> Current implementation soft locks the TUi
 	return tea.WindowSize()
 }
