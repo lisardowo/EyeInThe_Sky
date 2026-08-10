@@ -95,6 +95,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
+func UptimeHandle(bootTime time.Time, ) {
+
+	for true {
+
+		Uptime := time.Since(bootTime)
+		time.Sleep(1 * time.Second)
+	
+		} // THE FUCK U MEAN GO DOES NOT HAVE A WHILE @!#K!@INEWADWA
+
+	
+	
+}
+
 func (m Model) View() string {
 	m.Home.Uptime = time.Since(m.Home.BootAt)
 

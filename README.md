@@ -15,8 +15,8 @@ This project is just for fun and the sake of learning
 
 Current errors Ive found 
 1. ~~ Timestamp boot time evaluating to an error number ~~
-2. Extra width in dashboard parameters..?
-3. Home view does not consider the height of the screen to construct the render while dash does
+2. ~~ Extra width in dashboard parameters..? ~~
+3. ~~ Home view does not consider the height of the screen to construct the render while dash does ~~
  4.~~ i THINK THIS IS MORE OF A DEBUG ERROR BUT TERMINAL DASHBOARD DEFAULTS TO UNSAFE ENVIROMENT EVEN THO THE HOME DASHBOARD WAS MARKED AS SAFE ~~
 5. ~~ UNSAFE ENVIROMENT DOES NOT RENDER RESOURCE CONSUMPTION ~~
 6. ~~ In the dashboard view, when moving in between focused menus, if you press either l or h more than 3 times the focused highlight starts to behalf weird, sometimes not focusing the correct screen or sometimes jumping one/not rendering properly ~~

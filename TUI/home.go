@@ -142,6 +142,8 @@ rightContent := fmt.Sprintf(
 		rightWidth = leftWidth - 6
 	}
 
+	// Home view does not consider the height of the screen to construct the render while dash does
+	
 	borderColor := TrustBorderColor(TrustLevel)
 	leftStyle := leftBoxStyle.BorderForeground(borderColor).Width(leftWidth)
 	rightStyle := rightBoxStyle.BorderForeground(borderColor).Width(rightWidth)
@@ -155,4 +157,5 @@ rightContent := fmt.Sprintf(
 
 	return lipgloss.JoinHorizontal(lipgloss.Top, left, lipgloss.NewStyle().Width(gap).Render(""), right)
 }
+
 
