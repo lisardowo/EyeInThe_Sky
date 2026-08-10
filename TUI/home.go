@@ -33,8 +33,7 @@ type HomeState struct {
 
 	Operator     string
 	VLAN         int
-	BootAt       time.Time
-	Uptime       time.Duration
+	Uptime       chan time.Duration
 	//TODO WhichScreen  int  DELETE
 	
 }
@@ -68,7 +67,7 @@ func renderHome(m HomeState, TerminalHeight int, TerminalWidth int, TrustLevel c
 	}
 
 	leftContent := fmt.Sprintf(
-		"%s\n\n%s\n\nSpecs:\n- Master: %s\n- Mode: %s\n- Uptime: %s",
+		"%s\n\n%s\n\nSpecs:\n- Master: %s\n- Mode: %s\n- Uptime: %d",
 		titleStyle.Render("WELCOME OPERATOR"),
 		sigilASCII,
 		operator,

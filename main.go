@@ -38,8 +38,15 @@ func main() {
 		}
 	}
 
-	bootTime := time.Now()
-		initialModel := tui.Model{
+	// Creates a channel and sends it as struct to the home render 
+
+	BootUp := time.Now()
+	var UptimeTimer chan time.Duration
+	UptimeTimer = make(chan time.Duration)
+
+	go tui.UptimeHandle(BootUp, UptimeTimer)
+	
+	initialModel := tui.Model{
  				WhichScreen: tui.HomeScreen, // Default boot time screen, Maybe add memory to keep track of that.. ?
     			Width:       120,
 	    		Height:      240,
@@ -50,8 +57,8 @@ func main() {
 				Home:        tui.HomeState{
     			Operator:     "debug",
     			VLAN:         0,
-    			BootAt:       bootTime,
-    			Uptime:       time.Since(bootTime),
+    			Uptime:      UptimeTimer,
+
 				},
 
     			Dash:        tui.DashState{
