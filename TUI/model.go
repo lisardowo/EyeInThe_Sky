@@ -32,6 +32,11 @@ type Model struct {
 	//TrustLevel: connection.TrustLevel(2), Uptime: 67, Width: 120, Height: 120} // TODO debug model
 
 func (m Model) Init() tea.Cmd {
+	/* BootUp := time.Now()
+	var UptimeTimer chan time.Duration
+	UptimeTimer = make(chan time.Duration)
+	UptimeHandle(BootUp, UptimeTimer) */
+	//TODO Create channel for timer logic -> Current implementation soft locks the TUi
 	return tea.WindowSize()
 }
 
@@ -95,22 +100,21 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func UptimeHandle(bootTime time.Time, ) {
+func UptimeHandle(bootTime time.Time, UptimeTimer chan time.Duration   ) {
 
 	for true {
 
 		Uptime := time.Since(bootTime)
 		time.Sleep(1 * time.Second)
-	
+		UptimeTimer <- Uptime
+		fmt.Println(Uptime)
 		} // THE FUCK U MEAN GO DOES NOT HAVE A WHILE @!#K!@INEWADWA
 
-	
-	
 }
 
 func (m Model) View() string {
 	m.Home.Uptime = time.Since(m.Home.BootAt)
-
+	
 	if m.WhichScreen == DashScreen {
 		return renderDash(m.Dash, m.Height, m.Width, m.TrustLevel)
 	}
