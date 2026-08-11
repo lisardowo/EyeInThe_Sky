@@ -32,9 +32,9 @@ type Model struct {
 	//TrustLevel: connection.TrustLevel(2), Uptime: 67, Width: 120, Height: 120} // TODO debug model
 
 func (m Model) Init() tea.Cmd {
-
 	return tea.WindowSize()
 }
+
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {

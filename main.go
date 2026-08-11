@@ -47,6 +47,7 @@ func main() {
 	go tui.UptimeHandle(BootUp, UptimeTimer)
 	
 	initialModel := tui.Model{
+		
  				WhichScreen: tui.HomeScreen, // Default boot time screen, Maybe add memory to keep track of that.. ?
     			Width:       120,
 	    		Height:      240,

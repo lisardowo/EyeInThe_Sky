@@ -65,7 +65,7 @@ func renderHome(m HomeState, TerminalHeight int, TerminalWidth int, TrustLevel c
 	if vlan == 0 {
 		vlan = 10
 	}
-
+	
 	leftContent := fmt.Sprintf(
 		"%s\n\n%s\n\nSpecs:\n- Master: %s\n- Mode: %s\n- Uptime: %d",
 		titleStyle.Render("WELCOME OPERATOR"),
