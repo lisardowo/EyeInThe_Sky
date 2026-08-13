@@ -35,7 +35,7 @@ func main() {
 			operator = currentUser.Username
 		} else {
 			operator = "operator"
-		}
+		} 	
 	}
 
 	// Creates a channel and sends it as struct to the home render 
