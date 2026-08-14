@@ -14,8 +14,7 @@ const (
 	DashScreen
 )
 
-// Main Welcome model with a counter to decide if its either un home or dash
-
+type tickMsg time.Time
 
 type Model struct {
 	WhichScreen int
@@ -36,6 +35,9 @@ func (m Model) Init() tea.Cmd {
 
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+
+	tickCmd()
+
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.Width = msg.Width
@@ -95,21 +97,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func UptimeTimer(bootTime time.Time, UptimeTimer chan time.Duration) {
-
-	for true {
-
-		time.Sleep(1 * time.Second)
-		UptimeTimer <- time.Since(bootTime)
-		
-		} // THE FUCK U MEAN GO DOES NOT HAVE A WHILE @!#K!@INEWADWA
-
-}
-
-func getUptime(UptimeTimer chan time.Duration)(time.Duration){
-	return (<-UptimeTimer) 
-}
-
 func (m Model) View() string {
 	//m.Home.Uptime = time.Since(m.Home.BootAt)
 	
@@ -118,4 +105,10 @@ func (m Model) View() string {
 	}
 
 	return renderHome(m.Home, m.Height, m.Width, m.TrustLevel)
+}
+
+func tickCmd() tea.Cmd {
+	return tea.Tick(1 * time.Second, func(t time.Time) tea.Msg{
+		return tickMsg(t)
+	})
 }

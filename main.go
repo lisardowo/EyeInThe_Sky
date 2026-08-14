@@ -39,11 +39,11 @@ func main() {
 
 	// Creates a channel and sends it as struct to the home render 
 
-	BootUp := time.Now()
+	//BootUp := time.Now()
 	var UptimeTimer chan time.Duration
 	UptimeTimer = make(chan time.Duration)
 
-	go tui.UptimeTimer(BootUp, UptimeTimer)
+	//go tui.UptimeTimer(BootUp, UptimeTimer)
 	ringBuffer := tui.NewBuffer[any](50)
 	initialModel := tui.Model{
 		
