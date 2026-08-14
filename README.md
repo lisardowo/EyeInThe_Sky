@@ -23,15 +23,24 @@ Current errors Ive found
 
 ** 4 and 5 errors both were debug errors happening because i was passing in the main file an empty --debug only-- home and dashboard model
 
-7. The event stream keeps on growing when appending strings blocking the TUI completely, expected behavior is to leave behind old data keeping just fresh logs, the data is not deleted just displaced, when someone explictly enters via command in the log manager window then they can scroll trough the whole log
+~~ 7. The event stream keeps on growing when appending strings blocking the TUI completely, expected behavior is to leave behind old data keeping just fresh logs, the data is not deleted just displaced, when someone explictly enters via command in the log manager window then they can scroll trough the whole log ~~
 
 8. ~~ Home screen does not change color between secure and unsecure, dashboard works tho. TrustLevel parameter seems to not be connected what could be problematic ~~
 
 9. ~~ Home screen still not changing colors ~~
 
-10. The Time counter just updates when interacted with the TUI which is weird, implement the counter as a goroutine and reduce the amount of seconds displayed 
+~~ 10. The Time counter just updates when interacted with the TUI which is weird, implement the counter as a goroutine and reduce the amount of seconds displayed ~~
 
-11. Crashing when trying to log information onto the buffer 
+~~ 11. Crashing when trying to log information onto the buffer ~~
+
+12. Uptime is bugged due to a channel being filled up and no receiver for that information/gets locked onto some uptime value
+
+13. Ring log buffer works but renders everything as a plain array of strings which is ugly, use snprintf in Get method to properly format
+
+14. Reduce size of ring buffer 
+
+
+
 
 ## Code Reference
 
