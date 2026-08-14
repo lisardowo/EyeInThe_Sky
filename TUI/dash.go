@@ -121,9 +121,9 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 		Padding(0, 1)
 
 	logsContent := fmt.Sprintf(
-		"%s\n%s",
+		"%s\n",
 		headerStyle.Render("REAL-TIME EVENT STREAM (PROCESS-AS-YOU-GO)"),
-		state.LogsBuffer.Add("hell yeah"),
+		//state.LogsBuffer.Add("hell yeah"),
 	)
 
 	topHalf := lipgloss.JoinHorizontal(lipgloss.Top, telemetryStyle.Render(panelAContent), commandsStyle.Render(panelBContent))

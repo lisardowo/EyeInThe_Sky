@@ -45,7 +45,7 @@ func main() {
 	UptimeTimer = make(chan time.Duration)
 
 	go tui.UptimeHandle(BootUp, UptimeTimer)
-	
+	ringBuffer := tui.NewBuffer[any](50)
 	initialModel := tui.Model{
 		
  				WhichScreen: tui.HomeScreen, // Default boot time screen, Maybe add memory to keep track of that.. ?
@@ -66,12 +66,12 @@ func main() {
     			FocusedPanel: 0,
     			CPUUsage:     67.9,
     			RAMUsage:    69.8,
-    			LogsBuffer:   tui.RingBuffer[any]{
+    			LogsBuffer:   *ringBuffer,/* tui.RingBuffer[any]{
 					Buffer: nil,
 					Size: 50,
 					Head: 0,
 					Count: 0,
-				},
+				} */ 
     			Width:        120 },
 
 	}

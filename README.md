@@ -31,6 +31,8 @@ Current errors Ive found
 
 10. The Time counter just updates when interacted with the TUI which is weird, implement the counter as a goroutine and reduce the amount of seconds displayed 
 
+11. Crashing when trying to log information onto the buffer 
+
 ## Code Reference
 
 This section is a compact map of the most important types, variables, constants, and functions.
