@@ -136,6 +136,46 @@ initialModel := tui.Model{
 	Width:       120,
 	Height:      240, // DEBUG START TUI MODEL 
 }
+
+### `RingBuffer` - Generic circular buffer for recent entries
+Stores the latest N entries in a fixed-size circular buffer. Useful for
+logs and recent-event storage in the TUI. The implementation is generic
+using Go generics and exposes helpers to create, add and retrieve entries.
+Source: [TUI/ring.go](TUI/ring.go)
+
+```go
+type RingBuffer[Data any] struct {
+	Buffer []Data
+	Size   int
+	Head   int
+	Position int
+}
+```
+
+### `NewBuffer` - Constructor for `RingBuffer`
+Creates and returns a new `RingBuffer` with the requested size.
+Source: [TUI/ring.go](TUI/ring.go)
+
+```go
+func NewBuffer[Data any](size int) *RingBuffer[Data]
+```
+
+### `Add` - Append an entry to the `RingBuffer`
+Adds a new entry at the current head position and advances the head.
+If the buffer isn't full yet the `Position` counter is incremented.
+Source: [TUI/ring.go](TUI/ring.go)
+
+```go
+func (ringBuff *RingBuffer[Data]) Add(logEntry Data)
+```
+
+### `GetEntries` - Retrieve buffered entries in chronological order
+Returns a slice with the stored entries ordered from oldest to newest.
+Source: [TUI/ring.go](TUI/ring.go)
+
+```go
+func (ringBuff *RingBuffer[Data]) GetEntries() []Data
+```
 ```
 
 ### `Model.Init` - Requests terminal size on startup
