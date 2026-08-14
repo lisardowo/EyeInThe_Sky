@@ -55,7 +55,7 @@ const sigilASCII = `
 =========================  EYE IN THE SKY
 `
 
-func renderHome(m HomeState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel) string {
+func renderHome(m HomeState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel, Uptime time.Duration) string {
 	operator := m.Operator
 	if operator == "" {
 		operator = "operator"
@@ -72,7 +72,7 @@ func renderHome(m HomeState, TerminalHeight int, TerminalWidth int, TrustLevel c
 		sigilASCII,
 		operator,
 		TrustLevel,
-		m.Uptime,
+		Uptime,
 	)
 
 rightContent := fmt.Sprintf(

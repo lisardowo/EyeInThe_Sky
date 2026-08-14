@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 	"os/user"
-	"time"
 
 	//"strings"
 
@@ -40,8 +39,8 @@ func main() {
 	// Creates a channel and sends it as struct to the home render 
 
 	//BootUp := time.Now()
-	var UptimeTimer chan time.Duration
-	UptimeTimer = make(chan time.Duration)
+	//var UptimeTimer chan time.Duration
+	//UptimeTimer = make(chan time.Duration)
 
 	//go tui.UptimeTimer(BootUp, UptimeTimer)
 	ringBuffer := tui.NewBuffer[any](50)
@@ -57,7 +56,7 @@ func main() {
 				Home:        tui.HomeState{
     			Operator:     "debug",
     			VLAN:         0,
-    			Uptime:      UptimeTimer,
+    			//Uptime:      UptimeTimer,
 
 				},
 

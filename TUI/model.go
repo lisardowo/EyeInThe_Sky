@@ -19,6 +19,7 @@ type tickMsg time.Time
 type Model struct {
 	WhichScreen int
 	TrustLevel connection.TrustLevel
+	elapsed			time.Duration
 	Width,Height	int
 	LastKey      string	
 	LastAction   string // Last change
@@ -36,9 +37,13 @@ func (m Model) Init() tea.Cmd {
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
-	tickCmd()
-
 	switch msg := msg.(type) {
+	
+	case tickMsg:
+		
+		m.elapsed++
+		return m, tickCmd()
+
 	case tea.WindowSizeMsg:
 		m.Width = msg.Width
 		m.Height = msg.Height
@@ -61,7 +66,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		
 		}
-
+		//TODO move this to a wrapping fuction to keep update clean
 		if(m.WhichScreen == DashScreen){
 			switch msg.String() {
 		
@@ -104,7 +109,7 @@ func (m Model) View() string {
 		return renderDash(m.Dash, m.Height, m.Width, m.TrustLevel)
 	}
 
-	return renderHome(m.Home, m.Height, m.Width, m.TrustLevel)
+	return renderHome(m.Home, m.Height, m.Width, m.TrustLevel, m.elapsed)
 }
 
 func tickCmd() tea.Cmd {
