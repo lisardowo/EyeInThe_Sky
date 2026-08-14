@@ -43,7 +43,7 @@ func main() {
 	var UptimeTimer chan time.Duration
 	UptimeTimer = make(chan time.Duration)
 
-	go tui.UptimeHandle(BootUp, UptimeTimer)
+	go tui.UptimeTimer(BootUp, UptimeTimer)
 	ringBuffer := tui.NewBuffer[any](50)
 	initialModel := tui.Model{
 		
@@ -65,12 +65,7 @@ func main() {
     			FocusedPanel: 0,
     			CPUUsage:     67.9,
     			RAMUsage:    69.8,
-    			LogsBuffer:   *ringBuffer,/* tui.RingBuffer[any]{
-					Buffer: nil,
-					Size: 50,
-					Head: 0,
-					Count: 0,
-				} */ 
+    			LogsBuffer:   *ringBuffer,
     			},
 
 	}

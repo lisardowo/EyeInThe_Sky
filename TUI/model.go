@@ -95,17 +95,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func UptimeHandle(bootTime time.Time, UptimeTimer chan time.Duration   ) {
+func UptimeTimer(bootTime time.Time, UptimeTimer chan time.Duration) {
 
 	for true {
 
-		Uptime := time.Since(bootTime)
 		time.Sleep(1 * time.Second)
-		UptimeTimer <- Uptime
-		fmt.Println(Uptime)
+		UptimeTimer <- time.Since(bootTime)
 		
 		} // THE FUCK U MEAN GO DOES NOT HAVE A WHILE @!#K!@INEWADWA
 
+}
+
+func getUptime(UptimeTimer chan time.Duration)(time.Duration){
+	return (<-UptimeTimer) 
 }
 
 func (m Model) View() string {

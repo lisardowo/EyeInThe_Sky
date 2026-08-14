@@ -41,6 +41,7 @@ Current errors Ive found
 
 15. Implement a buffer for the logs of the tool that can be accessed via commands
 
+16. Implement the notification for non recognized keys pressed/selected in command
 
 ## Code Reference
 
