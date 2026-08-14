@@ -66,7 +66,12 @@ func main() {
     			FocusedPanel: 0,
     			CPUUsage:     67.9,
     			RAMUsage:    69.8,
-    			LogsBuffer:   nil,
+    			LogsBuffer:   tui.RingBuffer[any]{
+					Buffer: nil,
+					Size: 50,
+					Head: 0,
+					Count: 0,
+				},
     			Width:        120 },
 
 	}

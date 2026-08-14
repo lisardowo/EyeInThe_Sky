@@ -35,7 +35,7 @@ type DashState struct {
 	FocusedPanel   FocusPanel
 	CPUUsage       float64
 	RAMUsage       float64
-	LogsBuffer     []string
+	LogsBuffer     RingBuffer[any]
 	Width			int // TODO is width repeated?
 
 	
@@ -123,7 +123,7 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 	logsContent := fmt.Sprintf(
 		"%s\n%s",
 		headerStyle.Render("REAL-TIME EVENT STREAM (PROCESS-AS-YOU-GO)"),
-		strings.Join(state.LogsBuffer, "\n"),
+		state.LogsBuffer.Add("hell yeah"),
 	)
 
 	topHalf := lipgloss.JoinHorizontal(lipgloss.Top, telemetryStyle.Render(panelAContent), commandsStyle.Render(panelBContent))
