@@ -34,7 +34,7 @@ type HomeState struct {
 	Operator     string
 	VLAN         int
 	Uptime       chan time.Duration
-	//TODO WhichScreen  int  DELETE
+	
 	
 }
 

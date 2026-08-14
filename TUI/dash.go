@@ -36,8 +36,6 @@ type DashState struct {
 	CPUUsage       float64
 	RAMUsage       float64
 	LogsBuffer     RingBuffer[any]
-	Width			int // TODO is width repeated?
-
 	
 }
 
@@ -129,7 +127,7 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 	topHalf := lipgloss.JoinHorizontal(lipgloss.Top, telemetryStyle.Render(panelAContent), commandsStyle.Render(panelBContent))
 	bottomHalf := logsStyle.Render(logsContent)
 
-	availableWidth := state.Width
+	availableWidth := TerminalWidth
 	if availableWidth <= 0 {
 		availableWidth = 120
 	}

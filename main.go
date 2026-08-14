@@ -19,7 +19,6 @@ type ServerConnection struct {
 	IPAddr  string
 }
 
-//var TrustLevel connection.TrustLevel = connection.Secure // TODO HARCORDED VALUE
 
 func main() {
 
@@ -72,7 +71,7 @@ func main() {
 					Head: 0,
 					Count: 0,
 				} */ 
-    			Width:        120 },
+    			},
 
 	}
 	

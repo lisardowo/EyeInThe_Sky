@@ -12,15 +12,12 @@ type RingBuffer[Data any] struct {
 
 func NewBuffer[Data any](size int) *RingBuffer[Data] {
 	return(&RingBuffer[Data]{
-		Buffer:	make([]Data, size),//TODO is the program trying to write to the buffer when I haven constructed it yet?
+		Buffer:	make([]Data, size),
 		Size:	size,
 	})
 }
 
-func (ringBuff *RingBuffer[Data]) Add (logEntry Data){
-	
-	//ringBuff.muteX.Lock()
-	//defer ringBuff.muteX.Unlock() // Locks the buffer to prevent race conditions
+func (ringBuff *RingBuffer[Data]) Add(logEntry Data){
 
 	ringBuff.Buffer[ringBuff.Head] = logEntry // Appends the log entry to the head
 	ringBuff.Head = (ringBuff.Head + 1) % ringBuff.Size // Resets the index back to zero when .head == .size
@@ -34,11 +31,28 @@ func (ringBuff *RingBuffer[Data]) Add (logEntry Data){
 
 func  (ringBuff *RingBuffer[Data]) GetEntries() []Data{
 	
+	/* TODO more efficient implementation..?
+	
+	result := make([]Data, ringBuff.Position)
+	
+	// Calculate where the oldest element is currently located
+	start := (ringBuff.Head + ringBuff.Size - ringBuff.Position) % ringBuff.Size
+
+	// Copy in up to two chunks to handle the ring wrap-around
+	n := copy(result, ringBuff.Buffer[start:])
+	if n < ringBuff.Position {
+		copy(result[n:], ringBuff.Buffer[:ringBuff.Position-n])
+	}
+
+	return result
+	*/
+
+
 	result:= make([]Data, 0, ringBuff.Size)
 
 	for i := 0 ; i < ringBuff.Position ; i ++ {
 		index := (ringBuff.Head + ringBuff.Size - ringBuff.Position + i) % ringBuff.Size
-		result = append(result, ringBuff.Buffer[index])
+		result = append(result, ringBuff.Buffer[index] )
 	}
 
 	return result

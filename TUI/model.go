@@ -28,8 +28,7 @@ type Model struct {
 }
 
 
-//var modelWelcome = Model.HomeState{Operator: "mock", VLAN: 10,
-	//TrustLevel: connection.TrustLevel(2), Uptime: 67, Width: 120, Height: 120} // TODO debug model
+
 
 func (m Model) Init() tea.Cmd {
 	return tea.WindowSize()

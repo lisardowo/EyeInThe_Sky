@@ -39,7 +39,7 @@ Current errors Ive found
 
 14. Reduce size of ring buffer 
 
-
+15. Implement a buffer for the logs of the tool that can be accessed via commands
 
 
 ## Code Reference
