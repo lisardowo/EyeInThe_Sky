@@ -19,7 +19,7 @@ type tickMsg time.Time
 type Model struct {
 	WhichScreen int
 	TrustLevel connection.TrustLevel
-	elapsed			time.Duration
+	elapsed			time.Duration // Made this a pointer so it modifies outside of the msg ?
 	Width,Height	int
 	LastKey      string	
 	LastAction   string // Last change
