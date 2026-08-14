@@ -19,7 +19,7 @@ type tickMsg time.Time
 type Model struct {
 	WhichScreen int
 	TrustLevel connection.TrustLevel
-	elapsed			time.Duration // Made this a pointer so it modifies outside of the msg ?
+	Uptime			int // Made this a pointer so it modifies outside of the msg ?
 	Width,Height	int
 	LastKey      string	
 	LastAction   string // Last change
@@ -31,7 +31,7 @@ type Model struct {
 
 
 func (m Model) Init() tea.Cmd {
-	return tea.WindowSize()
+	 return tea.Batch(tea.WindowSize(), tickCmd())
 }
 
 
@@ -41,7 +41,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	
 	case tickMsg:
 		
-		m.elapsed++
+		m.Home.Uptime++
 		return m, tickCmd()
 
 	case tea.WindowSizeMsg:
@@ -109,7 +109,7 @@ func (m Model) View() string {
 		return renderDash(m.Dash, m.Height, m.Width, m.TrustLevel)
 	}
 
-	return renderHome(m.Home, m.Height, m.Width, m.TrustLevel, m.elapsed)
+	return renderHome(m.Home, m.Height, m.Width, m.TrustLevel, m.Home.Uptime)  
 }
 
 func tickCmd() tea.Cmd {

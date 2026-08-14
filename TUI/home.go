@@ -3,7 +3,6 @@ package TUI
 import (
 	connection "EyeInThe_Sky/createConnection"
 	"fmt"
-	"time"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -33,7 +32,7 @@ type HomeState struct {
 
 	Operator     string
 	VLAN         int
-	//TODO Delete ? Uptime       chan time.Duration
+	Uptime       int //TODO Delete ? 
 	
 	
 }
@@ -55,7 +54,7 @@ const sigilASCII = `
 =========================  EYE IN THE SKY
 `
 
-func renderHome(m HomeState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel, Uptime time.Duration) string {
+func renderHome(m HomeState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel, Uptime int) string {
 	operator := m.Operator
 	if operator == "" {
 		operator = "operator"
@@ -67,7 +66,7 @@ func renderHome(m HomeState, TerminalHeight int, TerminalWidth int, TrustLevel c
 	}
 	
 	leftContent := fmt.Sprintf(
-		"%s\n\n%s\n\nSpecs:\n- Master: %s\n- Mode: %s\n- Uptime: %d",
+		"%s\n\n%s\n\nSpecs:\n- Master: %s\n- Mode: %s\n- Uptime: %ds", //TODO implement a dynamic transform 4 minutes/hours(?), get uptime from servers 
 		titleStyle.Render("WELCOME OPERATOR"),
 		sigilASCII,
 		operator,

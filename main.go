@@ -56,7 +56,7 @@ func main() {
 				Home:        tui.HomeState{
     			Operator:     "debug",
     			VLAN:         0,
-    			//Uptime:      UptimeTimer,
+    			Uptime:      0,
 
 				},
 
