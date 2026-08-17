@@ -112,7 +112,7 @@ func GetCPUSample()(CPUSample, error){
 				total += n // adds up all the time values in the
 			}
 			idle, _ := strconv.ParseUint(fields[idleTime], 10 , 64)
-			fmt.Print(CPUSample{Idle: idle, Total: total})
+			
 			return CPUSample{Idle: idle, Total: total}, nil
 		}
 	}
@@ -130,7 +130,7 @@ func GetRamUsage()(float64, error){
 	}
 
 	defer file.Close()
-	//var available
+	
 	scanner := bufio.NewScanner(file)
   	for scanner.Scan(){ //Scanner.Scan returns an double pointer array so it must be accesed as foo[x]
 			line := scanner.Text()
@@ -139,7 +139,7 @@ func GetRamUsage()(float64, error){
 
 				fields := strings.Fields(line)
 				total, _ = strconv.ParseFloat(fields[memoryParameter] , 64)
-				//fmt.Println(total)	
+				
 				
 			}
 
@@ -147,7 +147,7 @@ func GetRamUsage()(float64, error){
 				fields := strings.Fields(line)
 				available, _ = strconv.ParseFloat(fields[memoryParameter], 64)
 
-				//fmt.Println(available)
+				
 			}
 			
 			if total > 0 && available > 0 {
@@ -157,15 +157,14 @@ func GetRamUsage()(float64, error){
 		}
 
 		if err := scanner.Err(); err != nil {
-    		log.Fatalf("Error encountered during file scanning: %v", err) // change this from log to the tool log 
+    		log.Fatalf("Error encountered during file scanning: %v", err) //TODO change this from log to the tool log 
 		}
 
 		if total == 0 {
 			fmt.Println(total, available, usedRamPercentage)
 			return 0, nil
 		}
-	//	foo := total - available
-	//	foo = uint64(float64(foo) / float64(total))
+	
 		usedRamPercentage = ((total - available)/total) * 100
 		fmt.Println(usedRamPercentage, total, available)
 	
