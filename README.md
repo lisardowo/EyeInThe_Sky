@@ -43,6 +43,10 @@ Current errors Ive found
 
 16. Implement the notification for non recognized keys pressed/selected in command
 
+17. Program gets soft locked one second while calulating cpu usage (due to the time sleep, better use a goroutine for that )
+
+18. The calculation in [sysinfo/metrics.go](sysinfo/metrics.go#L123) is wrong always throwing an 100 percent value  
+
 ## Code Reference
 
 This section is a compact map of the most important types, variables, constants, and functions.
