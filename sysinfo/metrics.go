@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 /*
@@ -117,6 +118,30 @@ func GetCPUSample()(CPUSample, error){
 		}
 	}
 	return CPUSample{}, nil
+}
+
+func CalculateCPUusage()(uint64, error){
+	
+	sample, _ := GetCPUSample()
+	total1 := sample.Total
+	idle1 := sample.Idle
+
+	time.Sleep(1 * time.Second)
+
+	sample , _ = GetCPUSample()
+
+	total2 := sample.Total
+	idle2 := sample.Idle
+
+	totalDelta := total2 - total1
+	idleDelta :=  idle2 - idle1
+
+	CPUusage := (1 - (idleDelta/totalDelta) ) * 100
+	fmt.Print(CPUusage)
+	return CPUusage, nil
+
+
+	//return math.MaxUint64 ,nil
 }
 
 func GetRamUsage()(float64, error){

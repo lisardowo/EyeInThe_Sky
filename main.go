@@ -21,7 +21,7 @@ type ServerConnection struct {
 
 
 func main() {
-
+	metrics.CalculateCPUusage()
 	metrics.GetCPUSample() //TODO watching debug information
 	//modeFlag := flag.String("mode", TrustLevel.String(), "analysis mode: secure or unsecure")
 	operatorFlag := flag.String("operator", "", "operator name shown in the TUI")
