@@ -1,11 +1,11 @@
 package TUI
 
-//"sync"
+
 
 type RingBuffer[Data any] struct {
 	Buffer []Data
 	Size 	int
-	//muteX 	sync.Mutex
+	
 	Head	int
 	Position	int
 }
