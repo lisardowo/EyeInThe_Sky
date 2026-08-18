@@ -45,7 +45,9 @@ Current errors Ive found
 
 17. Program gets soft locked one second while calulating cpu usage (due to the time sleep, better use a goroutine for that )
 
-18. The calculation in [sysinfo/metrics.go](sysinfo/metrics.go#L123) is wrong always throwing an 100 percent value  
+18. The calculation in [sysinfo/metrics.go](sysinfo/metrics.go#L123) is wrong always throwing an 100 percent value 
+
+19. In [sysinfo/metrics.go](sysinfo/metrics.go#L183) the values for available and total resolves to sum error value (xxxxe.7 or sum like that), the program, however works as supposed. This bug does not look like is causing problems at this moment but I think is best keep that logged in here  
 
 ## Code Reference
 

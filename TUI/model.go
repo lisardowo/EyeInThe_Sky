@@ -3,6 +3,7 @@ package TUI
 import (
 	//connection "EyeInThe_Sky/createConnection"
 	connection "EyeInThe_Sky/createConnection"
+	"EyeInThe_Sky/sysinfo"
 	"fmt"
 	"time"
 
@@ -16,13 +17,24 @@ const (
 
 type tickMsg time.Time
 
+
+type MetricMsg struct{
+	CPU float64
+	RAM float64
+	Sample sysinfo.CPUSample
+}
+
 type Model struct {
-	WhichScreen int
+	//General usage
+	prevCPUSample	sysinfo.CPUSample
 	TrustLevel connection.TrustLevel
-	Uptime			int // Made this a pointer so it modifies outside of the msg ?
-	Width,Height	int
+	Uptime			int
+	//Logs
 	LastKey      string	
 	LastAction   string // Last change
+	//Screen Information
+	Width,Height	int
+	WhichScreen int
 	Home HomeState
 	Dash DashState
 }
@@ -31,7 +43,9 @@ type Model struct {
 
 
 func (m Model) Init() tea.Cmd {
-	 return tea.Batch(tea.WindowSize(), tickCmd())
+	 return tea.Batch(tea.WindowSize(),
+	  tickCmd(),
+	fetchMetricsCmd(m.prevCPUSample))
 }
 
 
@@ -39,6 +53,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	
+	case MetricMsg:
+		m.Dash.CPUUsage = msg.CPU//TODO Move the cases to a separate function to avoid having long ass code in the update func
+		m.Dash.RAMUsage = msg.RAM
+		m.prevCPUSample = msg.Sample
+
+		return m, tea.Tick(1 * time.Second, func(_ time.Time) tea.Msg{
+			return fetchMetricsCmd(m.prevCPUSample)()
+		})
+
 	case tickMsg:
 		
 		m.Home.Uptime++
@@ -105,11 +128,25 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() string {
 	//m.Home.Uptime = time.Since(m.Home.BootAt)
 	
-	if m.WhichScreen == DashScreen {
+	if m.WhichScreen == DashScreen { 
 		return renderDash(m.Dash, m.Height, m.Width, m.TrustLevel)
 	}
 
 	return renderHome(m.Home, m.Height, m.Width, m.TrustLevel, m.Home.Uptime)  
+}
+
+func fetchMetricsCmd(prevSample sysinfo.CPUSample) tea.Cmd{
+	return func() tea.Msg{
+		currSample, _ := sysinfo.GetCPUSample()
+		cpu, _ := sysinfo.CalculateCPUusage(prevSample, currSample)
+		ram, _ := sysinfo.GetRamUsage() //TODO add if cpu/ram err != nil check
+
+		return MetricMsg{
+			CPU: cpu,
+			RAM: ram,
+			Sample: currSample,
+		}
+	}
 }
 
 func tickCmd() tea.Cmd {
