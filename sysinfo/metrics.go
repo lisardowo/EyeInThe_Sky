@@ -117,7 +117,7 @@ func GetCPUSample()(CPUSample, error){
 			return CPUSample{Idle: idle, Total: total}, nil
 		}
 	}
-	return CPUSample{}, nil
+	return CPUSample{}, errors.New("Not enough fields in /proc/stat")
 }
 
 func CalculateCPUusage(sample1, sample2 CPUSample) (float64, error){
