@@ -2,6 +2,7 @@ package sysinfo
 
 import (
 	"bufio"
+	"errors"
 
 	"log"
 	"math"
@@ -174,9 +175,12 @@ func GetRamUsage()(float64, error){
 			return 0, nil
 		}
 	
-		usedRamPercentage = ((total - available)/total) * 100
+	usedRamPercentage = ((total - available)/total) * 100
 		
-	
+	if usedRamPercentage < 0 || usedRamPercentage > 100 {
+    	return math.MaxUint64, errors.New("Ram usage out of bounds")
+	}
 
-	return math.MaxUint64, nil // returns maxuint as the default value for an error
+	return usedRamPercentage, nil
+	
 }
