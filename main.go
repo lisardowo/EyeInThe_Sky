@@ -3,12 +3,10 @@ package main
 import (
 	tui "EyeInThe_Sky/TUI"
 	connection "EyeInThe_Sky/createConnection"
-	metrics "EyeInThe_Sky/sysinfo"
 	"flag"
 	"fmt"
 	"os"
 	"os/user"
-	"time"
 
 	//"strings"
 
@@ -23,13 +21,6 @@ type ServerConnection struct {
 
 func main() {
 	
-	sample1, _:=metrics.GetCPUSample() //TODO watching debug information
-	
-	time.Sleep(2 * time.Second)
-
-	sample2, _:=metrics.GetCPUSample() //TODO watching debug information
-	
-	fmt.Println(metrics.CalculateCPUusage(sample1, sample2))
 	//modeFlag := flag.String("mode", TrustLevel.String(), "analysis mode: secure or unsecure")
 	operatorFlag := flag.String("operator", "", "operator name shown in the TUI")
 	//vlanFlag := flag.Int("vlan", 10, "VLAN identifier shown in the TUI")
