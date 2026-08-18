@@ -2,7 +2,7 @@ package sysinfo
 
 import (
 	"bufio"
-	"fmt"
+
 	"log"
 	"math"
 	"os"
@@ -121,17 +121,11 @@ func GetCPUSample()(CPUSample, error){
 
 func CalculateCPUusage(sample1, sample2 CPUSample) (float64, error){
 	
-	
-	
-
 	totalDelta := float64(sample2.Total - sample1.Total)
 	idleDelta :=  float64(sample2.Idle - sample1.Idle)
 
 	return (1 - (idleDelta/totalDelta) ) * 100, nil
 
-
-
-	//return math.MaxUint64 ,nil
 }
 
 func GetRamUsage()(float64, error){
@@ -176,12 +170,12 @@ func GetRamUsage()(float64, error){
 		}
 
 		if total == 0 {
-			fmt.Println(total, available, usedRamPercentage)
+			
 			return 0, nil
 		}
 	
 		usedRamPercentage = ((total - available)/total) * 100
-		fmt.Println(usedRamPercentage, total, available)
+		
 	
 
 	return math.MaxUint64, nil // returns maxuint as the default value for an error
