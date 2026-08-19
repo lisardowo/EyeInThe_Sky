@@ -18,7 +18,13 @@ const (
 )
 
 type tickMsg time.Time
+type LogFetchMsg struct{
+	Entries []LogEntry
+}
 
+type ProcessFetchMsg struct{
+	Entries []LogEntry
+}
 
 type MetricMsg struct{
 	CPU float64
@@ -47,7 +53,11 @@ type Model struct {
 func (m Model) Init() tea.Cmd {
 	 return tea.Batch(tea.WindowSize(),
 	  tickCmd(),
-	fetchMetricsCmd(m.prevCPUSample))
+	  fetchMetricsCmd(m.prevCPUSample),
+	  fetchProcessesCmd(),
+	  processesTickCmd(),
+	)
+	  
 }
 
 
@@ -55,6 +65,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	
+	case ProcessFetchMsg:
+		m.Dash.ProcessSnapshot = msg.Entries
+		return m, processesTickCmd()
+
 	case MetricMsg:
 		m.Dash.CPUUsage = msg.CPU//TODO Move the cases to a separate function to avoid having long ass code in the update func
 		m.Dash.RAMUsage = msg.RAM
@@ -127,7 +141,7 @@ func (m Model) View() string {
 	//m.Home.Uptime = time.Since(m.Home.BootAt)
 	
 	if m.WhichScreen == DashScreen { 
-		return renderDash(m.Dash, m.Height, m.Width, m.TrustLevel)
+		return renderDash(m.Dash, m.Height, m.Width, m.TrustLevel, m.Dash.ProcessSnapshot)
 	}
 
 	return renderHome(m.Home, m.Height, m.Width, m.TrustLevel, m.Home.Uptime)  
@@ -147,8 +161,23 @@ func fetchMetricsCmd(prevSample sysinfo.CPUSample) tea.Cmd{
 	}
 }
 
+func fetchProcessesCmd()tea.Cmd{
+	return func() tea.Msg{
+		entries, _ := ReadProcessLogs()
+		return ProcessFetchMsg{Entries: entries}
+	}
+
+
+}
+
 func tickCmd() tea.Cmd {
 	return tea.Tick(1 * time.Second, func(t time.Time) tea.Msg{
 		return tickMsg(t)
+	})
+}
+
+func processesTickCmd() tea.Cmd{
+	return tea.Tick(8 * time.Second, func(t time.Time) tea.Msg{
+		return fetchProcessesCmd()
 	})
 }
