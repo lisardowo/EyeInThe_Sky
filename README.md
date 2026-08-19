@@ -33,9 +33,9 @@ Current errors Ive found
 
 ~~ 11. Crashing when trying to log information onto the buffer ~~
 
-12. Uptime is bugged due to a channel being filled up and no receiver for that information/gets locked onto some uptime value
+12.~~ Uptime is bugged due to a channel being filled up and no receiver for that information/gets locked onto some uptime value ~~
 
-13. Ring log buffer works but renders everything as a plain array of strings which is ugly, use snprintf in Get method to properly format
+13. Ring log buffer works but renders everything as a plain array of strings which is ugly,
 
 14. Reduce size of ring buffer 
 

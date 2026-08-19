@@ -2,9 +2,11 @@ package TUI
 
 import (
 	//connection "EyeInThe_Sky/createConnection"
+
 	connection "EyeInThe_Sky/createConnection"
+
 	"EyeInThe_Sky/sysinfo"
-	"fmt"
+
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -95,26 +97,22 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		
 		
 				case "l":
-					currentValueBefore := fmt.Sprintf("currentValue After first 3 L : %d", m.Dash.FocusedPanel)
-					m.Dash.LogsBuffer.Add(currentValueBefore) //TODO debug = append(m.Dash.LogsBuffer, currentValueBefore)
+
 					if(m.Dash.FocusedPanel < 2){
 						m.Dash.FocusedPanel += 1
 					} else
 					{
-						currentValueAfter := fmt.Sprintf("currentValue Before first 3 L : %d", m.Dash.FocusedPanel)
-						m.Dash.LogsBuffer.Add(currentValueAfter)
+
 						m.Dash.FocusedPanel = 0
 					}
 				
 				case "h":
-					currentValueBefore := fmt.Sprintf("currentValue After first 3 h : %d", m.Dash.FocusedPanel)
-					m.Dash.LogsBuffer.Add(currentValueBefore)
+
 					if(m.Dash.FocusedPanel == 0){
 						m.Dash.FocusedPanel = 2
 					} else
 					{
-						currentValueAfter := fmt.Sprintf("currentValue Before first 3 h : %d", m.Dash.FocusedPanel)
-						m.Dash.LogsBuffer.Add(currentValueAfter)
+
 						m.Dash.FocusedPanel -= 1 
 					}
 				default: // TODO implement an "warning" notification letter not recognized, this goes over the layout in the corner of commands
