@@ -109,6 +109,7 @@ func ReadProcessLogs() ([]LogEntry, error){
 			entry, ok := readSingleProcess(pid)
 			
 			if ok {
+				entry = FormatFiltered(entry, CatProcess)
 				entries = append(entries,entry) //returns a collection/slice of the entries 
 			}
 	}

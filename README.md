@@ -49,6 +49,8 @@ Current errors Ive found
 
 19. In [sysinfo/metrics.go](sysinfo/metrics.go#L183) the values for available and total resolves to sum error value (xxxxe.7 or sum like that), the program, however works as supposed. This bug does not look like is causing problems at this moment but I think is best keep that logged in here  
 
+20. Log entries are not formated and return ALL processes instead of buffer allowed ones 
+
 ## Code Reference
 
 This section is a compact map of the most important types, variables, constants, and functions.
