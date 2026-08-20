@@ -32,7 +32,7 @@ func now() string {
 }
 
 func (l LogEntry) FormatEntry() string{
-	return fmt.Sprintf("[%s] %-5s | %s ||||||||||\n", l.Timestamp, l.Level, l.Message)
+	return fmt.Sprintf("[%s] %-5s | %s \n", l.Timestamp, l.Level, l.Message)
 }
 
 func (c LogCategory) IntToStringCategory() string{
@@ -109,7 +109,7 @@ func ReadProcessLogs() ([]LogEntry, error){
 			entry, ok := readSingleProcess(pid)
 			
 			if ok {
-				entry = FormatFiltered(entry, CatProcess)
+				//entry = FormatFiltered(entry, ) //TODO entries are formated two times
 				entries = append(entries,entry) //returns a collection/slice of the entries 
 			}
 	}
@@ -153,7 +153,7 @@ func readSingleProcess(pid int) (LogEntry, bool){
 		Timestamp:  now(),
 		Level:		level,
 		Category:	CatProcess,
-		Message:	fmt.Sprintf("pid:%-6d %-16s state:%-2s exe:%s", pid, command, state, exePath),
+		Message:	fmt.Sprintf("pid:%-6d %-16s state:%-2s exe:%s", pid, command, state, exePath), // message is constructed in two moments
 	}, true
 
 }

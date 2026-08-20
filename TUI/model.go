@@ -67,7 +67,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	
 	case ProcessFetchMsg:
 		m.Dash.ProcessSnapshot = msg.Entries
-		return m, processesTickCmd()
+		return m, processesTickCmd() //TODO fetch all the entries from processesTickCmd -> ReadProcessLogs -> ReadProcessLog
 
 	case MetricMsg:
 		m.Dash.CPUUsage = msg.CPU//TODO Move the cases to a separate function to avoid having long ass code in the update func
