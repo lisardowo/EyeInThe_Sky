@@ -32,7 +32,7 @@ func now() string {
 }
 
 func (l LogEntry) FormatEntry() string{
-	return fmt.Sprintf("[%s] %-5s | %s", l.Timestamp, l.Level, l.Message)
+	return fmt.Sprintf("[%s] %-5s | %s ||||||||||\n", l.Timestamp, l.Level, l.Message)
 }
 
 func (c LogCategory) IntToStringCategory() string{
@@ -78,8 +78,8 @@ func FormatFiltered(entries []LogEntry, activeFilter *LogCategory) []string{
 		entries = FilterEntriesCategory(entries, *activeFilter)
 	}
 	out := make([]string, 0 , len(entries))
-	for _, e := range entries{
-		out = append(out, e.FormatEntry())
+	for _, entry := range entries{
+		out = append(out, entry.FormatEntry())
 	}
 
 	return out
@@ -97,14 +97,19 @@ func ReadProcessLogs() ([]LogEntry, error){
 	}
 
 	var entries []LogEntry
+	const maxEntries = 20
 	for _, name := range names{
+		if len(entries) >= maxEntries {
+            break
+        }
 		pid, err := strconv.Atoi(name)
 			if err != nil{
 				continue // Usually the dir is not a PID but a string name, P.e /proc/meminfo
 			}
 			entry, ok := readSingleProcess(pid)
-			if ok{
-				entries = append(entries,entry)
+			
+			if ok {
+				entries = append(entries,entry) //returns a collection/slice of the entries 
 			}
 	}
 	return entries, nil

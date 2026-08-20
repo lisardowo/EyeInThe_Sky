@@ -120,6 +120,8 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 		Height(bottomHalfHeight).
 		Padding(0, 1)
 		//TODO here we retrieve the entries and format them so we can append it to the log display content as lines
+	
+	
 	logsContent := fmt.Sprintf(
 		"%s\n\n%v",
 	headerStyle.Render("REAL-TIME EVENT STREAM (PROCESS-AS-YOU-GO)"), entries)
