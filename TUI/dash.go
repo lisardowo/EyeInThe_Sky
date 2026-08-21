@@ -37,11 +37,11 @@ type DashState struct {
 	RAMUsage        float64
 	LogsBuffer      RingBuffer[LogEntry]
 	ActiveFilter    *LogCategory
-	ProcessSnapshot	[]LogEntry
+	ProcessSnapshot	[]string
 	
 }
 
-func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel, entries []LogEntry) string {
+func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel, entries []string) string {
 	
 	topHalfHeight := (TerminalHeight / 2) - 2
 	bottomHalfHeight := (TerminalHeight / 2) - 2

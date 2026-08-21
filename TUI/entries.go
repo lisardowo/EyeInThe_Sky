@@ -31,9 +31,9 @@ func now() string {
 	return time.Now().Format("15:04:05")
 }
 
-func (l LogEntry) FormatEntry() string{
-	return fmt.Sprintf("[%s] %-5s | %s \n", l.Timestamp, l.Level, l.Message)
-}
+ func (l LogEntry) FormatEntry() string{
+	return fmt.Sprintf("[%s] -- %s -- : %s", l.Timestamp, l.Level, l.Message)
+} 
 
 func (c LogCategory) IntToStringCategory() string{
 	switch c{
@@ -80,13 +80,15 @@ func FormatFiltered(entries []LogEntry, activeFilter *LogCategory) []string{
 	out := make([]string, 0 , len(entries))
 	for _, entry := range entries{
 		out = append(out, entry.FormatEntry())
+		fmt.Println(entry)
 	}
 
 	return out
 }
 
-func ReadProcessLogs() ([]LogEntry, error){
+func ReadProcessLogs() ([]string, error){
 	
+	filter := CatProcess
 	procDir, err := os.Open("/proc")
 	if err != nil{
 		return nil, err
@@ -97,7 +99,7 @@ func ReadProcessLogs() ([]LogEntry, error){
 	}
 
 	var entries []LogEntry
-	const maxEntries = 20
+	const maxEntries = 20 // TODO debug value
 	for _, name := range names{
 		if len(entries) >= maxEntries {
             break
@@ -109,11 +111,13 @@ func ReadProcessLogs() ([]LogEntry, error){
 			entry, ok := readSingleProcess(pid)
 			
 			if ok {
-				//entry = FormatFiltered(entry, ) //TODO entries are formated two times
-				entries = append(entries,entry) //returns a collection/slice of the entries 
+				
+				entries = append(entries,entry )
+				
 			}
 	}
-	return entries, nil
+	
+	return FormatFiltered(entries, &filter), nil
 }
 
 func readSingleProcess(pid int) (LogEntry, bool){
@@ -153,7 +157,7 @@ func readSingleProcess(pid int) (LogEntry, bool){
 		Timestamp:  now(),
 		Level:		level,
 		Category:	CatProcess,
-		Message:	fmt.Sprintf("pid:%-6d %-16s state:%-2s exe:%s", pid, command, state, exePath), // message is constructed in two moments
+		Message:	fmt.Sprintf("pid:%-6d %-16s state:%-2s exe:%s\n", pid, command, state, exePath), // message is constructed in two moments
 	}, true
 
 }

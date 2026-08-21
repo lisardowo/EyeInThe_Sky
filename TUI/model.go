@@ -23,7 +23,7 @@ type LogFetchMsg struct{
 }
 
 type ProcessFetchMsg struct{
-	Entries []LogEntry
+	Entries []string
 }
 
 type MetricMsg struct{
