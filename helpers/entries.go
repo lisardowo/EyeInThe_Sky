@@ -1,7 +1,6 @@
-package TUI
+package helpers
 
 import (
-	"EyeInThe_Sky/helpers"
 	"bufio"
 	"fmt"
 	"os"
@@ -197,9 +196,9 @@ func readNetworkTable(path string, protocol string)([]LogEntry, error){
 			continue //TODO if not Valid hex len ignore, should throw err? 
 		}
 
-		localAddress := helpers.HexToIPport(fields[1])
-		remoteAddress := helpers.HexToIPport(fields[2])
-		state := helpers.GetState(fields[3])
+		localAddress := HexToIPport(fields[1])
+		remoteAddress := HexToIPport(fields[2])
+		state := GetState(fields[3])
 		if state == "NOT VALID"{
 			return entries, scanner.Err()
 		}

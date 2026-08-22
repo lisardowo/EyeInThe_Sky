@@ -1,6 +1,8 @@
 package helpers
 
-import "os"
+import (
+	"os"
+)
 
 var ReportFile *os.File
 
@@ -13,4 +15,17 @@ func InitReport(path string) error {
 	ReportFile = fd
 	
 	return nil
+}
+
+func CloseReport(){
+	if ReportFile != nil{
+		ReportFile.Close()
+	}
+}
+
+func WriteReport(entry LogEntry ){
+	if ReportFile == nil {
+		return
+	}
+	ReportFile.WriteString(entry.FormatEntry() + "\n")
 }

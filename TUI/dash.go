@@ -2,6 +2,7 @@ package TUI
 
 import (
 	connection "EyeInThe_Sky/createConnection"
+	"EyeInThe_Sky/helpers"
 	"fmt"
 	"strings"
 
@@ -35,14 +36,12 @@ type DashState struct {
 	FocusedPanel    FocusPanel
 	CPUUsage        float64
 	RAMUsage        float64
-	LogsBuffer      RingBuffer[LogEntry]
-	ActiveFilter    *LogCategory
-	ProcessSnapshot	[]string
-	NetworkSnapshot []LogEntry
+	LogsBuffer      RingBuffer[helpers.LogEntry]
+	ActiveFilter    *helpers.LogCategory
 	
 }
 
-func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel, Proccessentries []string, NetworkEntries []LogEntry) string { //TODO make a function that unifies all the different entries into one alone
+func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel) string { //TODO make a function that unifies all the different entries into one alone
 	
 	topHalfHeight := (TerminalHeight / 2) - 2
 	bottomHalfHeight := (TerminalHeight / 2) - 2
@@ -91,7 +90,7 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 		Height(topHalfHeight).
 		Padding(1)
 
-	//
+	
 	var commandMenu string
 	if TrustLevel == connection.Secure{
 		commandMenu = "> [1] Deploy Update\n> [2] Network Diagnostics\n> [3] Open SSH Terminal Session"
@@ -119,100 +118,20 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 		BorderForeground(onFocus(state.FocusedPanel == PanelLogs, activeBorderColor, colorMuted)).
 		Width(TerminalWidth - 2).
 		Height(bottomHalfHeight).
-		Padding(0, 1)
-		//TODO here we retrieve the entries and format them so we can append it to the log display content as lines
-	if Proccessentries != nil{
-		logsContent := fmt.Sprintf(
-		"%s\n\n%v",
-		headerStyle.Render("REAL-TIME EVENT STREAM (PROCESS-AS-YOU-GO)"), Proccessentries)
-		topHalf := lipgloss.JoinHorizontal(lipgloss.Top, telemetryStyle.Render(panelAContent), commandsStyle.Render(panelBContent))
-		bottomHalf := logsStyle.Render(logsContent)
-			availableWidth := TerminalWidth
-	if availableWidth <= 0 {
-		availableWidth = 120
-	}
-	minPaneWidth := 28
-	gap := 2
-	stacked := availableWidth < 90
+		Padding(0,1)
 
-	leftWidth := availableWidth - 4
-	rightWidth := leftWidth - 4
-	if !stacked {
-		leftWidth = int(float64(availableWidth) * 0.58)
-		rightWidth = availableWidth - leftWidth - gap - 6
-		if leftWidth < 34 {
-			leftWidth = 34
-		}
-		if rightWidth < 24 {
-			rightWidth = 24 - 6
-		}
-		if leftWidth+rightWidth+gap > availableWidth {
-			rightWidth = availableWidth - leftWidth - gap - 6
-		}
-		if rightWidth < minPaneWidth {
-			rightWidth = minPaneWidth
-		}
-	} else {
-		if leftWidth < minPaneWidth {
-			leftWidth = minPaneWidth
-		}
-		rightWidth = leftWidth - 6
-	}
+	lines := helpers.FormatFiltered(state.LogsBuffer.GetEntries(), state.ActiveFilter)
+	logsContent := fmt.Sprintf("%s\n\n%s", headerStyle.Render("REAL-TIME EVENT STREAM (PROCESS-AS-YOU-GO)"),
+	strings.Join(lines, "\n"),
+)
 
-	if stacked {
-		return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
-	}
+	topHalf := lipgloss.JoinHorizontal(lipgloss.Top, telemetryStyle.Render(panelAContent), commandsStyle.Render(panelBContent))
+	bottomHalf := logsStyle.Render(logsContent)
 
 	return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
 
 }
-	if NetworkEntries != nil{
-		logsContent := fmt.Sprintf(
-		"%s\n\n%v",
-		headerStyle.Render("REAL-TIME EVENT STREAM (PROCESS-AS-YOU-GO)"), NetworkEntries)
-		topHalf := lipgloss.JoinHorizontal(lipgloss.Top, telemetryStyle.Render(panelAContent), commandsStyle.Render(panelBContent))
-		bottomHalf := logsStyle.Render(logsContent)
-			availableWidth := TerminalWidth
-	if availableWidth <= 0 {
-		availableWidth = 120
-	}
-	minPaneWidth := 28
-	gap := 2
-	stacked := availableWidth < 90
 
-	leftWidth := availableWidth - 4
-	rightWidth := leftWidth - 4
-	if !stacked {
-		leftWidth = int(float64(availableWidth) * 0.58)
-		rightWidth = availableWidth - leftWidth - gap - 6
-		if leftWidth < 34 {
-			leftWidth = 34
-		}
-		if rightWidth < 24 {
-			rightWidth = 24 - 6
-		}
-		if leftWidth+rightWidth+gap > availableWidth {
-			rightWidth = availableWidth - leftWidth - gap - 6
-		}
-		if rightWidth < minPaneWidth {
-			rightWidth = minPaneWidth
-		}
-	} else {
-		if leftWidth < minPaneWidth {
-			leftWidth = minPaneWidth
-		}
-		rightWidth = leftWidth - 6
-	}
-
-	if stacked {
-		return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
-	}
-
-	return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
-
-}
-	return "DEBUG"
-}
 
 	
 

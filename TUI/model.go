@@ -5,6 +5,7 @@ import (
 
 	connection "EyeInThe_Sky/createConnection"
 
+	"EyeInThe_Sky/helpers"
 	"EyeInThe_Sky/sysinfo"
 
 	"time"
@@ -19,15 +20,15 @@ const (
 
 type tickMsg time.Time
 type LogFetchMsg struct{
-	Entries []LogEntry
+	Entries []helpers.LogEntry
 }
 
 type ProcessFetchMsg struct{
-	Entries []string
+	Entries []helpers.LogEntry
 }
 
 type NetworkFetchMsg struct{
-	Entries []LogEntry
+	Entries []helpers.LogEntry
 }
 
 type MetricMsg struct{
@@ -71,10 +72,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	
 	case NetworkFetchMsg:
-		m.Dash.NetworkSnapshot = msg.Entries
+		for _, entry := range msg.Entries{
+			if evicted, ok := m.Dash.LogsBuffer.Add(entry); ok{
+				helpers.WriteReport(evicted)
+			}
+		} //TODO TURN THIS INTO A FUNCTION?
 		return m, networkTickCmd() 
 	case ProcessFetchMsg:
-		m.Dash.ProcessSnapshot = msg.Entries
+		for _, entry := range msg.Entries{
+			if evicted, ok := m.Dash.LogsBuffer.Add(entry); ok{
+				helpers.WriteReport(evicted)
+			}
+		}
 		return m, processesTickCmd() //TODO fetch all the entries from processesTickCmd -> ReadProcessLogs -> ReadProcessLog
 
 	case MetricMsg:
@@ -149,7 +158,7 @@ func (m Model) View() string {
 	//m.Home.Uptime = time.Since(m.Home.BootAt)
 	
 	if m.WhichScreen == DashScreen { 
-		return renderDash(m.Dash, m.Height, m.Width, m.TrustLevel, m.Dash.ProcessSnapshot, m.Dash.NetworkSnapshot)
+		return renderDash(m.Dash, m.Height, m.Width, m.TrustLevel)
 	}
 
 	return renderHome(m.Home, m.Height, m.Width, m.TrustLevel, m.Home.Uptime)  
@@ -171,14 +180,14 @@ func fetchMetricsCmd(prevSample sysinfo.CPUSample) tea.Cmd{
 
 func fetchProcessesCmd()tea.Cmd{
 	return func() tea.Msg{
-		entries, _ := ReadProcessLogs()
+		entries, _ := helpers.ReadProcessLogs()
 		return ProcessFetchMsg{Entries: entries}
 	}
 }
 
 func fetchNetworkCmd()tea.Cmd{
 	return func() tea.Msg{
-		entries, _ := ReadTCPLogs() //TODO just reading TCP, combine with UDP logs
+		entries, _ := helpers.ReadTCPLogs() //TODO just reading TCP, combine with UDP logs
 		return NetworkFetchMsg{Entries: entries}
 	}
 }

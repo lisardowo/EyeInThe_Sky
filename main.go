@@ -3,6 +3,7 @@ package main
 import (
 	tui "EyeInThe_Sky/TUI"
 	connection "EyeInThe_Sky/createConnection"
+	"EyeInThe_Sky/helpers"
 	"flag"
 	"fmt"
 	"os"
@@ -35,6 +36,12 @@ func main() {
 		} 	
 	}
 
+	err := helpers.InitReport(".eyeinthesky_report.log")
+	if err != nil {
+		fmt.Println("Report file cannot be opened", err)
+	}
+
+	defer helpers.CloseReport()
 	// Creates a channel and sends it as struct to the home render 
 
 	//BootUp := time.Now()
@@ -63,7 +70,7 @@ func main() {
     			FocusedPanel: 0,
     			CPUUsage:     67.9,
     			RAMUsage:    69.8,
-    			LogsBuffer: *tui.NewBuffer[tui.LogEntry](1),
+    			LogsBuffer: *tui.NewBuffer[helpers.LogEntry](1),
     			},
 
 	}
