@@ -38,6 +38,8 @@ type DashState struct {
 	RAMUsage        float64
 	LogsBuffer      RingBuffer[helpers.LogEntry]
 	ActiveFilter    *helpers.LogCategory
+	CommandMode		bool
+	CommandInput	string
 	
 }
 
@@ -120,13 +122,31 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 		Height(bottomHalfHeight).
 		Padding(0,1)
 
+	filtersLabel := "ALL"
+	if state.ActiveFilter != nil {
+		filtersLabel = state.ActiveFilter.IntToStringCategory()
+	}
+
 	lines := helpers.FormatFiltered(state.LogsBuffer.GetEntries(), state.ActiveFilter)
-	logsContent := fmt.Sprintf("%s\n\n%s", headerStyle.Render("REAL-TIME EVENT STREAM (PROCESS-AS-YOU-GO)"),
+	logsContent := fmt.Sprintf("%s [filter: %s]\n\n%s", headerStyle.Render("REAL-TIME EVENT STREAM (PROCESS-AS-YOU-GO)"),
+	filtersLabel,
 	strings.Join(lines, "\n"),
 )
 
 	topHalf := lipgloss.JoinHorizontal(lipgloss.Top, telemetryStyle.Render(panelAContent), commandsStyle.Render(panelBContent))
 	bottomHalf := logsStyle.Render(logsContent)
+	if state.CommandMode {
+		commandBarStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#FFFFFF")).
+		Background(lipgloss.Color("#1a1a1a")).
+		Width(TerminalWidth).
+		Padding(1,0)
+	
+		commandBar := commandBarStyle.Render(state.CommandInput)
+	
+		return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf, commandBar)
+	
+	}
 
 	return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
 

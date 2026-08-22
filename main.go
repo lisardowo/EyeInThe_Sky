@@ -70,7 +70,7 @@ func main() {
     			FocusedPanel: 0,
     			CPUUsage:     67.9,
     			RAMUsage:    69.8,
-    			LogsBuffer: *tui.NewBuffer[helpers.LogEntry](30),
+    			LogsBuffer: *tui.NewBuffer[helpers.LogEntry](1),
     			},
 
 	}

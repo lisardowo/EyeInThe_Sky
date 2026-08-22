@@ -7,7 +7,7 @@ import (
 
 	"EyeInThe_Sky/helpers"
 	"EyeInThe_Sky/sysinfo"
-
+	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -89,11 +89,45 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Width = msg.Width
 		m.Height = msg.Height
 		return m, nil
+	
 	case tea.KeyMsg:
 		m.LastKey = msg.String()
 
 		if msg.Type == tea.KeyCtrlQ {
 			return m, tea.Quit
+		}
+
+		if m.Dash.CommandMode{
+			switch msg.Type{
+				case tea.KeyEnter:
+					cmd := m.Dash.CommandInput
+					m.Dash.CommandMode = false
+					m.Dash.CommandInput = ""
+
+					trimmed := strings.TrimPrefix(cmd, ":")
+					if trimmed == "all" || trimmed == "" {
+						m.Dash.ActiveFilter = nil
+					} else if cat, ok := helpers.SelectCategory(cmd); ok{
+						m.Dash.ActiveFilter = &cat
+					}
+
+					return m, nil
+
+				case tea.KeyEsc:
+					m.Dash.CommandMode = false
+					m.Dash.CommandInput = ""
+					return m,nil
+				case tea.KeyBackspace:
+					if len(m.Dash.CommandInput) > 1 {
+						m.Dash.CommandInput = m.Dash.CommandInput[:len(m.Dash.CommandInput) - 1]
+					}
+					return m,nil
+				case tea.KeyRunes:
+					m.Dash.CommandInput += msg.String()
+					return m, nil
+				default:
+					return m, nil //TODO raise a warning of not recognized commands
+			}
 		}
 
 		switch msg.Type {
@@ -110,8 +144,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		//TODO move this to a wrapping fuction to keep update clean
 		if(m.WhichScreen == DashScreen){
 			switch msg.String() {
+				
 		
-		
+				case ":":
+					
+					m.Dash.CommandMode = true
+					m.Dash.CommandInput = ":"
+					
+					return m, nil
+
 				case "l":
 
 					if(m.Dash.FocusedPanel < 2){
