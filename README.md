@@ -49,7 +49,9 @@ Current errors Ive found
 
 19. In [sysinfo/metrics.go](sysinfo/metrics.go#L183) the values for available and total resolves to sum error value (xxxxe.7 or sum like that), the program, however works as supposed. This bug does not look like is causing problems at this moment but I think is best keep that logged in here  
 
-20. Log entries are not formated and return ALL processes instead of buffer allowed ones		 
+20. ~~ Log entries are not formated and return ALL processes instead of buffer allowed ones ~~
+21. Log process return 1 slice (using only 1 space of the ring buffer), this creates a bug where the screen is full but the ring buffer only have 1 space ocuppied therefore  not cycling the logs
+22. Log process is stuck at N elements its allowed to and wont check after that. Implementation plant suggest that the routine is always checking for the ultimate status of the processes to return them		 
 
 ## Code Reference
 

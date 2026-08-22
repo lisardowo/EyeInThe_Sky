@@ -1,6 +1,8 @@
 package TUI
 
 import (
+	"EyeInThe_Sky/helpers"
+	"bufio"
 	"fmt"
 	"os"
 	"strconv"
@@ -8,6 +10,7 @@ import (
 	"time"
 )
 
+//TODO move helper function to helpers module and leave in here just the logic to read and process final entries
 type LogCategory int
 
 const (
@@ -16,6 +19,7 @@ const (
 	CatApp
 	CatFirewall
 	CatProcess
+	CatKernel
 )
 
 const notFound int = -1
@@ -37,6 +41,7 @@ func now() string {
 
 func (c LogCategory) IntToStringCategory() string{
 	switch c{
+
 		case CatSystem:
 			return "SYS"
 		case CatNetwork:
@@ -45,6 +50,11 @@ func (c LogCategory) IntToStringCategory() string{
 			return "APP"
 		case CatFirewall:
 			return "FW"
+		case CatProcess:
+			return "PROC"
+		case CatKernel:
+			return "KRNL"
+		
 		default:
 			return "???"
 	}
@@ -58,6 +68,12 @@ func SelectCategory(cmd string) (LogCategory, bool){
 			return CatSystem, true
 		case "f":
 			return CatFirewall, true
+		case "a":
+			return CatApp, true
+		case "p":
+			return CatProcess, true
+		case "k":
+			return CatKernel, true
 		default:
 			return 0, false
 	}
@@ -160,4 +176,53 @@ func readSingleProcess(pid int) (LogEntry, bool){
 		Message:	fmt.Sprintf("pid:%-6d %-16s state:%-2s exe:%s\n", pid, command, state, exePath), // message is constructed in two moments
 	}, true
 
+}
+
+func readNetworkTable(path string, protocol string)([]LogEntry, error){
+	fd, err := os.Open(path) // function meant for both TCP and udp
+	if err != nil{
+		return nil, err
+	}
+	defer fd.Close()
+
+	var entries []LogEntry
+	scanner := bufio.NewScanner(fd)
+	line := 0
+	for scanner.Scan(){
+		line ++
+		if line == 1 {
+			continue // header, ignore 
+		}
+		//2664A8C0:D022 IP:PORT (?
+		fields := strings.Fields(scanner.Text())
+		if len(fields) < 4 {
+			continue //TODO if not Valid hex len ignore, should throw err? 
+		}
+
+		localAddress := helpers.HexToIPport(fields[1])
+		remoteAddress := helpers.HexToIPport(fields[2])
+		state := helpers.GetState(fields[3])
+		if state == "NOT VALID"{
+			return entries, scanner.Err()
+		}
+		entries = append(entries, LogEntry{
+			Timestamp: now(),
+			Level: "INFO",
+			Category: CatNetwork,
+			Message: fmt.Sprintf("[%s] %s -> %s : State{%s}", protocol, localAddress,remoteAddress, state),
+		})
+
+	}
+
+	return entries, nil 
+
+}
+
+func ReadTCPLogs() ([]LogEntry, error){
+	return readNetworkTable("/proc/net/tcp", "TCP")
+}
+
+
+func ReadUDPLogs() ([]LogEntry, error){
+	return readNetworkTable("/proc/net/udp", "UDP")
 }
