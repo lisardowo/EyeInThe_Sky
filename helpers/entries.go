@@ -170,7 +170,7 @@ func readSingleProcess(pid int) (LogEntry, bool){
 		Timestamp:  now(),
 		Level:		level,
 		Category:	CatProcess,
-		Message:	fmt.Sprintf("pid:%-6d %-16s state:%-2s exe:%s\n", pid, command, state, exePath), // message is constructed in two moments
+		Message:	fmt.Sprintf("pid:%-6d %-16s state:%-2s exe:%s", pid, command, state, exePath), // message is constructed in two moments
 	}, true
 
 }
@@ -206,7 +206,7 @@ func readNetworkTable(path string, protocol string)([]LogEntry, error){
 			Timestamp: now(),
 			Level: "INFO",
 			Category: CatNetwork,
-			Message: fmt.Sprintf("[%s] %s -> %s : State{%s}\n", protocol, localAddress,remoteAddress, state),
+			Message: fmt.Sprintf("[%s] %s -> %s : State{%s}", protocol, localAddress,remoteAddress, state),
 		})
 
 	}
@@ -224,7 +224,7 @@ func ReadUDPLogs() ([]LogEntry, error){
 	return readNetworkTable("/proc/net/udp", "UDP")
 }
 
-func readModulesLogs()([]LogEntry, error){
+func ReadModulesLogs()([]LogEntry, error){
 	fd, err := os.Open("/proc/modules")
 	if err != nil{
 		return nil, err

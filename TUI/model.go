@@ -19,15 +19,7 @@ const (
 )
 
 type tickMsg time.Time
-type LogFetchMsg struct{
-	Entries []helpers.LogEntry
-}
-
-type ProcessFetchMsg struct{
-	Entries []helpers.LogEntry
-}
-
-type NetworkFetchMsg struct{
+type FetchMsg struct{
 	Entries []helpers.LogEntry
 }
 
@@ -59,9 +51,8 @@ func (m Model) Init() tea.Cmd {
 	 return tea.Batch(tea.WindowSize(),
 	  tickCmd(),
 	  fetchMetricsCmd(m.prevCPUSample),
-	  //fetchProcessesCmd(),
-	  fetchNetworkCmd(),
-	  processesTickCmd(),
+	  fetchAllCmd(),
+	  collectTickCmd(),
 	)
 	  
 }
@@ -71,20 +62,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	
-	case NetworkFetchMsg:
-		for _, entry := range msg.Entries{
-			if evicted, ok := m.Dash.LogsBuffer.Add(entry); ok{
-				helpers.WriteReport(evicted)
-			}
-		} //TODO TURN THIS INTO A FUNCTION?
-		return m, networkTickCmd() 
-	case ProcessFetchMsg:
+	
+	case FetchMsg:
 		for _, entry := range msg.Entries{
 			if evicted, ok := m.Dash.LogsBuffer.Add(entry); ok{
 				helpers.WriteReport(evicted)
 			}
 		}
-		return m, processesTickCmd() //TODO fetch all the entries from processesTickCmd -> ReadProcessLogs -> ReadProcessLog
+		return m, collectTickCmd() //TODO fetch all the entries from processesTickCmd -> ReadProcessLogs -> ReadProcessLog
 
 	case MetricMsg:
 		m.Dash.CPUUsage = msg.CPU//TODO Move the cases to a separate function to avoid having long ass code in the update func
@@ -178,17 +163,28 @@ func fetchMetricsCmd(prevSample sysinfo.CPUSample) tea.Cmd{
 	}
 }
 
-func fetchProcessesCmd()tea.Cmd{
-	return func() tea.Msg{
-		entries, _ := helpers.ReadProcessLogs()
-		return ProcessFetchMsg{Entries: entries}
-	}
-}
+func fetchAllCmd() tea.Cmd{
+	
+	return func() tea.Msg {
+	var all []helpers.LogEntry
 
-func fetchNetworkCmd()tea.Cmd{
-	return func() tea.Msg{
-		entries, _ := helpers.ReadTCPLogs() //TODO just reading TCP, combine with UDP logs
-		return NetworkFetchMsg{Entries: entries}
+		if e, err := helpers.ReadProcessLogs(); err == nil {
+			all = append(all, e...)
+		}
+		if e, err := helpers.ReadTCPLogs(); err == nil {
+			all = append(all, e...)
+		}
+		if e, err := helpers.ReadUDPLogs(); err == nil {
+			all = append(all, e...)
+		}
+		if e, err := helpers.ReadModulesLogs(); err == nil {
+			all = append(all, e...)
+		}
+		if e, err := helpers.ReadDiskstatsLogs(); err == nil {
+			all = append(all, e...)
+		}
+
+		return FetchMsg{Entries: all}
 	}
 }
 
@@ -198,13 +194,8 @@ func tickCmd() tea.Cmd {
 	})
 }
 
-func processesTickCmd() tea.Cmd{
-	return tea.Tick(8 * time.Second, func(t time.Time) tea.Msg{
-		return fetchProcessesCmd()
-	})
-}
-func networkTickCmd() tea.Cmd{
-	return tea.Tick(8 * time.Second, func(t time.Time) tea.Msg{
-		return fetchNetworkCmd()
+func collectTickCmd() tea.Cmd {
+	return tea.Tick(8*time.Second, func(t time.Time) tea.Msg {
+		return fetchAllCmd()()
 	})
 }
