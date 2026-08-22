@@ -17,7 +17,12 @@ func NewBuffer[Data any](size int) *RingBuffer[Data] {
 	})
 }
 
-func (ringBuff *RingBuffer[Data]) Add(logEntry Data){
+func (ringBuff *RingBuffer[Data]) Add(logEntry Data)(evicted Data, wasEvicted bool){
+
+	if ringBuff.Position == ringBuff.Size{
+		wasEvicted = true
+		evicted = ringBuff.Buffer[ringBuff.Head]
+	}
 
 	ringBuff.Buffer[ringBuff.Head] = logEntry // Appends the log entry to the head
 	ringBuff.Head = (ringBuff.Head + 1) % ringBuff.Size // Resets the index back to zero when .head == .size
@@ -26,6 +31,7 @@ func (ringBuff *RingBuffer[Data]) Add(logEntry Data){
 		ringBuff.Position++
 	}
 
+	return
 
 }
 

@@ -97,15 +97,14 @@ func FormatFiltered(entries []LogEntry, activeFilter *LogCategory) []string{
 	out := make([]string, 0 , len(entries))
 	for _, entry := range entries{
 		out = append(out, entry.FormatEntry())
-		fmt.Println(entry)
 	}
 
 	return out
 }
 
-func ReadProcessLogs() ([]string, error){
+func ReadProcessLogs() ([]LogEntry, error){
 	
-	filter := CatProcess
+	
 	procDir, err := os.Open("/proc")
 	if err != nil{
 		return nil, err
@@ -116,11 +115,9 @@ func ReadProcessLogs() ([]string, error){
 	}
 
 	var entries []LogEntry
-	const maxEntries = 20 // TODO debug value
+	
 	for _, name := range names{
-		if len(entries) >= maxEntries {
-            break
-        }
+		
 		pid, err := strconv.Atoi(name)
 			if err != nil{
 				continue // Usually the dir is not a PID but a string name, P.e /proc/meminfo
@@ -134,7 +131,7 @@ func ReadProcessLogs() ([]string, error){
 			}
 	}
 	
-	return FormatFiltered(entries, &filter), nil
+	return entries, nil
 }
 
 func readSingleProcess(pid int) (LogEntry, bool){
