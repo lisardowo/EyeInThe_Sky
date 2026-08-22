@@ -12,6 +12,7 @@ import (
 
 //TODO move helper function to helpers module and leave in here just the logic to read and process final entries
 type LogCategory int
+const diskStateFields int = 14
 
 const (
 	CatSystem LogCategory = iota
@@ -225,4 +226,64 @@ func ReadTCPLogs() ([]LogEntry, error){
 
 func ReadUDPLogs() ([]LogEntry, error){
 	return readNetworkTable("/proc/net/udp", "UDP")
+}
+
+func readModulesLogs()([]LogEntry, error){
+	fd, err := os.Open("/proc/modules")
+	if err != nil{
+		return nil, err
+	}
+
+	defer fd.Close()
+
+	var entries []LogEntry
+	scanner := bufio.NewScanner(fd)
+	for scanner.Scan(){
+		fields := strings.Fields(scanner.Text())
+		if len(fields) < 3{
+			continue
+		}
+		name := fields[0]
+		size := fields[1]
+		useCount := fields[2]
+
+		entries = append(entries, LogEntry{
+			Timestamp: now(),
+			Level: "INFO",
+			Category: CatKernel,
+			Message: fmt.Sprintf("%-20s size:%-8s used:%s", name, size, useCount)})
+	}
+	return entries, scanner.Err()
+}
+
+func ReadDiskstatsLogs()([]LogEntry, error){
+	fd, err := os.Open("/proc/diskstats")
+	if err != nil{
+		return nil, err
+	}
+
+	defer fd.Close()
+
+	var entries []LogEntry
+	scanner := bufio.NewScanner(fd)
+	for scanner.Scan() {
+		fields := strings.Fields(scanner.Text())
+		if len(fields) < diskStateFields{
+			continue
+		}
+		device := fields[2]
+		sectorsRead := fields[5]
+		sectorsWritten := fields[9]
+
+		if strings.HasPrefix(device, "loop") || strings.HasPrefix(device, "ram"){
+			continue //ignore loop/ram devices since dont have valuable information
+		}
+		entries = append(entries, LogEntry{
+			Timestamp: now(),
+			Level: "INFO",
+			Category: CatSystem,
+			Message: fmt.Sprintf("%-8s sectors_read:%-10s sectors_written:%s", device, sectorsRead, sectorsWritten),
+		})
+	}
+	return entries, scanner.Err()
 }
