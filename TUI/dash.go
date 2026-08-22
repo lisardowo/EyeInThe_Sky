@@ -38,10 +38,11 @@ type DashState struct {
 	LogsBuffer      RingBuffer[LogEntry]
 	ActiveFilter    *LogCategory
 	ProcessSnapshot	[]string
+	NetworkSnapshot []LogEntry
 	
 }
 
-func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel, entries []string) string {
+func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel, Proccessentries []string, NetworkEntries []LogEntry) string { //TODO make a function that unifies all the different entries into one alone
 	
 	topHalfHeight := (TerminalHeight / 2) - 2
 	bottomHalfHeight := (TerminalHeight / 2) - 2
@@ -120,16 +121,13 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 		Height(bottomHalfHeight).
 		Padding(0, 1)
 		//TODO here we retrieve the entries and format them so we can append it to the log display content as lines
-	
-	
-	logsContent := fmt.Sprintf(
+	if Proccessentries != nil{
+		logsContent := fmt.Sprintf(
 		"%s\n\n%v",
-	headerStyle.Render("REAL-TIME EVENT STREAM (PROCESS-AS-YOU-GO)"), entries)
-
-	topHalf := lipgloss.JoinHorizontal(lipgloss.Top, telemetryStyle.Render(panelAContent), commandsStyle.Render(panelBContent))
-	bottomHalf := logsStyle.Render(logsContent)
-
-	availableWidth := TerminalWidth
+		headerStyle.Render("REAL-TIME EVENT STREAM (PROCESS-AS-YOU-GO)"), Proccessentries)
+		topHalf := lipgloss.JoinHorizontal(lipgloss.Top, telemetryStyle.Render(panelAContent), commandsStyle.Render(panelBContent))
+		bottomHalf := logsStyle.Render(logsContent)
+			availableWidth := TerminalWidth
 	if availableWidth <= 0 {
 		availableWidth = 120
 	}
@@ -168,6 +166,57 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 	return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
 
 }
+	if NetworkEntries != nil{
+		logsContent := fmt.Sprintf(
+		"%s\n\n%v",
+		headerStyle.Render("REAL-TIME EVENT STREAM (PROCESS-AS-YOU-GO)"), NetworkEntries)
+		topHalf := lipgloss.JoinHorizontal(lipgloss.Top, telemetryStyle.Render(panelAContent), commandsStyle.Render(panelBContent))
+		bottomHalf := logsStyle.Render(logsContent)
+			availableWidth := TerminalWidth
+	if availableWidth <= 0 {
+		availableWidth = 120
+	}
+	minPaneWidth := 28
+	gap := 2
+	stacked := availableWidth < 90
+
+	leftWidth := availableWidth - 4
+	rightWidth := leftWidth - 4
+	if !stacked {
+		leftWidth = int(float64(availableWidth) * 0.58)
+		rightWidth = availableWidth - leftWidth - gap - 6
+		if leftWidth < 34 {
+			leftWidth = 34
+		}
+		if rightWidth < 24 {
+			rightWidth = 24 - 6
+		}
+		if leftWidth+rightWidth+gap > availableWidth {
+			rightWidth = availableWidth - leftWidth - gap - 6
+		}
+		if rightWidth < minPaneWidth {
+			rightWidth = minPaneWidth
+		}
+	} else {
+		if leftWidth < minPaneWidth {
+			leftWidth = minPaneWidth
+		}
+		rightWidth = leftWidth - 6
+	}
+
+	if stacked {
+		return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
+	}
+
+	return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
+
+}
+	return "DEBUG"
+}
+
+	
+
+
 
 // HELP
 

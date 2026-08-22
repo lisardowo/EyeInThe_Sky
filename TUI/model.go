@@ -26,6 +26,10 @@ type ProcessFetchMsg struct{
 	Entries []string
 }
 
+type NetworkFetchMsg struct{
+	Entries []LogEntry
+}
+
 type MetricMsg struct{
 	CPU float64
 	RAM float64
@@ -54,7 +58,8 @@ func (m Model) Init() tea.Cmd {
 	 return tea.Batch(tea.WindowSize(),
 	  tickCmd(),
 	  fetchMetricsCmd(m.prevCPUSample),
-	  fetchProcessesCmd(),
+	  //fetchProcessesCmd(),
+	  fetchNetworkCmd(),
 	  processesTickCmd(),
 	)
 	  
@@ -65,6 +70,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	
+	case NetworkFetchMsg:
+		m.Dash.NetworkSnapshot = msg.Entries
+		return m, networkTickCmd() 
 	case ProcessFetchMsg:
 		m.Dash.ProcessSnapshot = msg.Entries
 		return m, processesTickCmd() //TODO fetch all the entries from processesTickCmd -> ReadProcessLogs -> ReadProcessLog
@@ -141,7 +149,7 @@ func (m Model) View() string {
 	//m.Home.Uptime = time.Since(m.Home.BootAt)
 	
 	if m.WhichScreen == DashScreen { 
-		return renderDash(m.Dash, m.Height, m.Width, m.TrustLevel, m.Dash.ProcessSnapshot)
+		return renderDash(m.Dash, m.Height, m.Width, m.TrustLevel, m.Dash.ProcessSnapshot, m.Dash.NetworkSnapshot)
 	}
 
 	return renderHome(m.Home, m.Height, m.Width, m.TrustLevel, m.Home.Uptime)  
@@ -166,8 +174,13 @@ func fetchProcessesCmd()tea.Cmd{
 		entries, _ := ReadProcessLogs()
 		return ProcessFetchMsg{Entries: entries}
 	}
+}
 
-
+func fetchNetworkCmd()tea.Cmd{
+	return func() tea.Msg{
+		entries, _ := ReadTCPLogs() //TODO just reading TCP, combine with UDP logs
+		return NetworkFetchMsg{Entries: entries}
+	}
 }
 
 func tickCmd() tea.Cmd {
@@ -179,5 +192,10 @@ func tickCmd() tea.Cmd {
 func processesTickCmd() tea.Cmd{
 	return tea.Tick(8 * time.Second, func(t time.Time) tea.Msg{
 		return fetchProcessesCmd()
+	})
+}
+func networkTickCmd() tea.Cmd{
+	return tea.Tick(8 * time.Second, func(t time.Time) tea.Msg{
+		return fetchNetworkCmd()
 	})
 }

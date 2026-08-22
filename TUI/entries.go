@@ -209,7 +209,7 @@ func readNetworkTable(path string, protocol string)([]LogEntry, error){
 			Timestamp: now(),
 			Level: "INFO",
 			Category: CatNetwork,
-			Message: fmt.Sprintf("[%s] %s -> %s : State{%s}", protocol, localAddress,remoteAddress, state),
+			Message: fmt.Sprintf("[%s] %s -> %s : State{%s}\n", protocol, localAddress,remoteAddress, state),
 		})
 
 	}
