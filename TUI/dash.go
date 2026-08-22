@@ -43,6 +43,25 @@ type DashState struct {
 	
 }
 
+func overlayCommandBar(view string, input string, width int) string {
+	lines := strings.Split(view, "\n")
+	if len(lines) == 0 {
+		return view
+	}
+
+	commandBarStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#FFFFFF")).
+		Background(lipgloss.Color("#1a1a1a")).
+		Width(width)
+
+	bar := commandBarStyle.Render(input + "▏")
+
+	
+	lines[len(lines)-1] = bar
+
+	return strings.Join(lines, "\n")
+}
+
 func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel) string { //TODO make a function that unifies all the different entries into one alone
 	
 	topHalfHeight := (TerminalHeight / 2) - 2
@@ -135,21 +154,15 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 
 	topHalf := lipgloss.JoinHorizontal(lipgloss.Top, telemetryStyle.Render(panelAContent), commandsStyle.Render(panelBContent))
 	bottomHalf := logsStyle.Render(logsContent)
+
+	fullView := lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
+
 	if state.CommandMode {
-		commandBarStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FFFFFF")).
-		Background(lipgloss.Color("#1a1a1a")).
-		Width(TerminalWidth).
-		Padding(1,0)
-	
-		commandBar := commandBarStyle.Render(state.CommandInput)
-	
-		return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf, commandBar)
+		fullView = overlayCommandBar(fullView, state.CommandInput, TerminalWidth)
 	
 	}
 
-	return lipgloss.JoinVertical(lipgloss.Left, topHalf, bottomHalf)
-
+	return fullView
 }
 
 
