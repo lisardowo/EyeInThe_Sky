@@ -35,22 +35,22 @@ Current errors Ive found
 
 12.~~ Uptime is bugged due to a channel being filled up and no receiver for that information/gets locked onto some uptime value ~~
 
-13. Ring log buffer works but renders everything as a plain array of strings which is ugly,
+13. ~~Ring log buffer works but renders everything as a plain array of strings which is ugly,~~
 
-14. Reduce size of ring buffer 
+14. ~~ Reduce size of ring buffer ~~
 
 15. Implement a buffer for the logs of the tool that can be accessed via commands
 
 16. Implement the notification for non recognized keys pressed/selected in command
 
-17. Program gets soft locked one second while calulating cpu usage (due to the time sleep, better use a goroutine for that )
+17. ~~Program gets soft locked one second while calulating cpu usage (due to the time sleep, better use a goroutine for that )~~
 
-18. The calculation in [sysinfo/metrics.go](sysinfo/metrics.go#L123) is wrong always throwing an 100 percent value 
+18. ~~ The calculation in [sysinfo/metrics.go](sysinfo/metrics.go#L123) is wrong always throwing an 100 percent value ~~
 
-19. In [sysinfo/metrics.go](sysinfo/metrics.go#L183) the values for available and total resolves to sum error value (xxxxe.7 or sum like that), the program, however works as supposed. This bug does not look like is causing problems at this moment but I think is best keep that logged in here  
+~~ 19. In [sysinfo/metrics.go](sysinfo/metrics.go#L183) the values for available and total resolves to sum error value (xxxxe.7 or sum like that), the program, however works as supposed. This bug does not look like is causing problems at this moment but I think is best keep that logged in here~~
 
 20. ~~ Log entries are not formated and return ALL processes instead of buffer allowed ones ~~
-21. Log process return 1 slice (using only 1 space of the ring buffer), this creates a bug where the screen is full but the ring buffer only have 1 space ocuppied therefore  not cycling the logs
+~~ 21. Log process return 1 slice (using only 1 space of the ring buffer), this creates a bug where the screen is full but the ring buffer only have 1 space ocuppied therefore  not cycling the logs ~~
 ~~22. Log process is stuck at N elements its allowed to and wont check after that. Implementation plant suggest that the routine is always checking for the ultimate status of the processes to return them		 ~~
 23. Log is working, but filters are kind of not doing it properly, gotta check that and rework the logic
 
