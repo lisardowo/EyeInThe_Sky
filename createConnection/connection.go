@@ -29,10 +29,10 @@ func (t TrustLevel) TrustToString() string{
 
 
 type RemoteFrame struct {
-    CPU         float64 `json: "cpu"`
+    CPU         float64 `json:"cpu"`
     RAM         float64 `json:"ram"`
-    Log         string  `json:log`
-    Category    int      `json:category`
+    Log         string  `json:"log"`
+    Category    int      `json:"category"`
 }
 
 type USBConnection struct {
