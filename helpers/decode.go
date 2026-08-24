@@ -11,7 +11,7 @@ const ipv4Size int = 4
 func HexToIPport(field string) string{
 	parts := strings.Split(field, ":")
 	if len(parts) != 2{
-		return field //TODO can not be two?, should it return an err?
+		return field
 	}
 	ipHex, portHex := parts[0], parts[1]
 	if len(ipHex) != 8{
