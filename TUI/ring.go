@@ -37,28 +37,14 @@ func (ringBuff *RingBuffer[Data]) Add(logEntry Data)(evicted Data, wasEvicted bo
 
 func  (ringBuff *RingBuffer[Data]) GetEntries() []Data{
 	
-	/* TODO more efficient implementation..?
-	
+
 	result := make([]Data, ringBuff.Position)
-	
-	// Calculate where the oldest element is currently located
+
 	start := (ringBuff.Head + ringBuff.Size - ringBuff.Position) % ringBuff.Size
 
-	// Copy in up to two chunks to handle the ring wrap-around
 	n := copy(result, ringBuff.Buffer[start:])
-	if n < ringBuff.Position {
-		copy(result[n:], ringBuff.Buffer[:ringBuff.Position-n])
-	}
-
-	return result
-	*/
-
-
-	result:= make([]Data, 0, ringBuff.Size)
-
-	for i := 0 ; i < ringBuff.Position ; i ++ {
-		index := (ringBuff.Head + ringBuff.Size - ringBuff.Position + i) % ringBuff.Size
-		result = append(result, ringBuff.Buffer[index] )
+	if n < ringBuff.Position{
+		copy(result[n:], ringBuff.Buffer[:ringBuff.Position-n]) // faster implementation than previous using copy (memmove)
 	}
 
 	return result
