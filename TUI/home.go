@@ -88,40 +88,8 @@ rightContent := fmt.Sprintf(
 	)
 
 
-	availableWidth := TerminalWidth
-	if availableWidth <= 0 {
-		availableWidth = 120
-	}
-// TODO calculations below can be moved to a utility getSize function
-	minPaneWidth := 28
-	gap := 2
-	stacked := availableWidth < 90
 
-	leftWidth := availableWidth - 4
-	rightWidth := leftWidth - 4
-	if !stacked {
-		leftWidth = int(float64(availableWidth) * 0.58)
-		rightWidth = availableWidth - leftWidth - gap - 6
-		if leftWidth < 34 {
-			leftWidth = 34
-		}
-		if rightWidth < 24 {
-			rightWidth = 24 - 6
-		}
-		if leftWidth+rightWidth+gap > availableWidth {
-			rightWidth = availableWidth - leftWidth - gap - 6
-		}
-		if rightWidth < minPaneWidth {
-			rightWidth = minPaneWidth
-		}
-	} else {
-		if leftWidth < minPaneWidth {
-			leftWidth = minPaneWidth
-		}
-		rightWidth = leftWidth - 6
-	}
-
-	// Home view does not consider the height of the screen to construct the render while dash does
+	leftWidth, rightWidth, stacked := GetSize(TerminalHeight, TerminalWidth)
 	
 	borderColor := TrustBorderColor(TrustLevel)
 	leftStyle := leftBoxStyle.BorderForeground(borderColor).Width(leftWidth)
@@ -134,7 +102,7 @@ rightContent := fmt.Sprintf(
 		return lipgloss.JoinVertical(lipgloss.Left, left, lipgloss.NewStyle().Height(1).Render(""), right)
 	}
 
-	return lipgloss.JoinHorizontal(lipgloss.Top, left, lipgloss.NewStyle().Width(gap).Render(""), right)
+	return lipgloss.JoinHorizontal(lipgloss.Top, left, lipgloss.NewStyle().Width(2).Render(""), right)
 }
 
 
