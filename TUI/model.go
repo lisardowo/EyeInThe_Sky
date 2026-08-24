@@ -144,7 +144,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if trimmed == "all" || trimmed == "" {
 						m.Dash.ActiveFilter = nil
 					} else if cat, ok := helpers.SelectCategory(cmd); ok{
-						m.Dash.ActiveFilter = &cat
+						m.Dash.ActiveFilter = &cat //filters current buffer content therefor not reaching the commands
 					}
 
 					return m, nil
