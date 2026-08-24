@@ -6,6 +6,28 @@ import (
 	"go.bug.st/serial"
 )
 
+type TrustLevel int
+
+const (
+	Secure   TrustLevel = iota //0s
+	Unsecure
+)
+
+func (t TrustLevel) TrustToString() string{
+    switch t {
+        
+        case Secure:
+            return "Secure"
+        case Unsecure:
+            return "Unsecure"
+        default: 
+            return "Unknown"
+
+    }
+
+}
+
+
 type RemoteFrame struct {
     CPU         float64 `json: "cpu"`
     RAM         float64 `json:"ram"`

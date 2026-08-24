@@ -69,7 +69,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				helpers.WriteReport(evicted)
 			}
 		}
-		return m, collectTickCmd() //TODO fetch all the entries from processesTickCmd -> ReadProcessLogs -> ReadProcessLog
+		return m, collectTickCmd() 
 
 	case MetricMsg:
 		m.Dash.CPUUsage = msg.CPU//TODO Move the cases to a separate function to avoid having long ass code in the update func

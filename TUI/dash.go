@@ -12,12 +12,11 @@ import (
 type FocusPanel int
 
 var (
-	// TODO TEST FILE MOVE TO GENERAL FILE TO REUSE
+	
 	colorSecure   = lipgloss.Color("#5F00FF") // 
 	colorUnsecure = lipgloss.Color("#FF0000") // 
 	colorMuted    = lipgloss.Color("#ffffff") //#242424
 	colorTextMute = lipgloss.Color("#ffffff")     //240 
-
 	
 	headerStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#FFFFFF")).
@@ -62,7 +61,7 @@ func overlayCommandBar(view string, input string, width int) string {
 	return strings.Join(lines, "\n")
 }
 
-func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel) string { //TODO make a function that unifies all the different entries into one alone
+func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLevel connection.TrustLevel) string {
 	
 	topHalfHeight := (TerminalHeight / 2) - 2
 	bottomHalfHeight := (TerminalHeight / 2) - 2
@@ -164,11 +163,6 @@ func renderDash(state DashState, TerminalHeight int, TerminalWidth int, TrustLev
 
 	return fullView
 }
-
-
-	
-
-
 
 // HELP
 
