@@ -2,6 +2,7 @@ package createconnection
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -109,4 +110,39 @@ func (connection *USBConnection) Connect() error{
     connection.Scanner = bufio.NewScanner(port)
     return nil
 
+}
+
+func (connection *USBConnection) Close() error {
+   if connection.Port != nil{
+        return connection.Port.Close()
+   }
+   return nil
+}
+
+func (connection *USBConnection) ReadNextFrame() (RemoteFrame,error){
+
+    if connection.Port != nil{
+        return RemoteFrame{}, fmt.Errorf("Port was not initialized")
+    }
+
+    if connection.Scanner.Scan(){
+        line := strings.TrimSpace(connection.Scanner.Text())
+        if len(line) == 0 {
+            return RemoteFrame{}, fmt.Errorf("Empty frame")
+        }
+
+        var frame RemoteFrame
+
+        if err := json.Unmarshal([]byte(line), &frame); err != nil{
+            return RemoteFrame{}, fmt.Errorf("Error while parsing frame: %w", err)
+        }
+        return frame,nil
+    }
+
+    if err := connection.Scanner.Err(); err != nil{
+        return RemoteFrame{}, err
+    }
+
+
+    return RemoteFrame{}, fmt.Errorf("USB timeout")
 }
