@@ -60,9 +60,9 @@ type Model struct {
 func (m Model) Init() tea.Cmd {
 	 return tea.Batch(tea.WindowSize(),
 	  tickCmd(),
-	  fetchMetricsCmd(m.prevCPUSample),
+	 /* fetchMetricsCmd(m.prevCPUSample),
 	  fetchAllCmd(),
-	  collectTickCmd(),
+	  collectTickCmd(), STOP READING FROM HOST*/
 	)
 	  
 }
@@ -161,7 +161,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyEnter:
 			m.WhichScreen = DashScreen
 			m.LastAction = "start handshake"
-			return m, nil
+
+			m.usbConn = createconnection.NewUSBConnection()
+			if err := m.usbConn.Connect(); err != nil {
+				return m, nil //TODO raise an alert for failed connection
+			}
+			if err := m.usbConn.PerformHandshake(); err != nil{
+				m.usbConn.Close()
+				return m,nil
+			}
+
+			return m, waitForUSBData(m.usbConn)
+			
 		case tea.KeyEsc:
 			m.WhichScreen = HomeScreen
 			m.LastAction = "return home"

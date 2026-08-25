@@ -75,7 +75,6 @@ type Model struct {
 ```
 
 ### `HomeState` - Home screen data container
-Stores the welcome screen data such as operator, mode, boot time, and uptime.
 The home renderer reads this structure directly.
 Source: [TUI/home.go](TUI/home.go#L32)
 
@@ -187,7 +186,6 @@ Source: [TUI/ring.go](TUI/ring.go)
 
 ```go
 func (ringBuff *RingBuffer[Data]) GetEntries() []Data
-```
 ```
 
 ### `Model.Init` - Requests terminal size on startup

@@ -48,10 +48,11 @@ type USBConnection struct {
     Scanner  *bufio.Scanner
 }
 
-func NewUSBConnection(portPath string, baudRate int) *USBConnection {
-    if portPath == "" {
-        portPath = DetectUSB()
-    }
+func NewUSBConnection() *USBConnection {
+    
+    portPath := DetectUSB()
+    baudRate := getBaud()
+
     if baudRate == 0 {
         baudRate = 115200// returns std baudRate 4 lunux
     }
@@ -60,6 +61,12 @@ func NewUSBConnection(portPath string, baudRate int) *USBConnection {
         PortPath: portPath,
         BaudRate: baudRate,
     }
+}
+
+func getBaud() int{
+
+    return  115200 //TODO std linux baud rate, not actual tho.. Need to implement a func to dinamic get that 
+
 }
 
 func DetectUSB() string {
@@ -145,4 +152,26 @@ func (connection *USBConnection) ReadNextFrame() (RemoteFrame,error){
 
 
     return RemoteFrame{}, fmt.Errorf("USB timeout")
+}
+
+func (connection *USBConnection) PerformHandshake() error {
+    if connection.Port == nil {
+        return errors.New("Port not initialized")
+    }
+
+    if _, err := connection.Port.Write([]byte("SYN:EYE_IN_THE_SKY\n")); err != nil{
+        return fmt.Errorf("[SYN] Error performing handshake in %v", err)
+    }
+
+    if connection.Scanner.Scan(){
+        resp := strings.TrimSpace(connection.Scanner.Text())
+
+        if resp == "ACK:EYE_REPORTER_ONLINE"{
+            return nil
+        }
+        return fmt.Errorf("Invalid answer from %s", resp)
+    }
+
+    return fmt.Errorf("timeout reached waiting for the demon")
+
 }
