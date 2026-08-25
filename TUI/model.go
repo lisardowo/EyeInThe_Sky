@@ -4,6 +4,7 @@ import (
 	//connection "EyeInThe_Sky/createConnection"
 
 	connection "EyeInThe_Sky/createConnection"
+	createconnection "EyeInThe_Sky/createConnection"
 
 	"EyeInThe_Sky/helpers"
 	"EyeInThe_Sky/sysinfo"
@@ -29,8 +30,14 @@ type MetricMsg struct{
 	Sample sysinfo.CPUSample
 }
 
+type USBFrameMsg struct {
+	Frame createconnection.RemoteFrame
+	Err error
+}
+
 type Model struct {
 	//General usage
+	usbConn		*createconnection.USBConnection
 	prevCPUSample	sysinfo.CPUSample
 	TrustLevel connection.TrustLevel
 	Uptime			int
@@ -45,43 +52,10 @@ type Model struct {
 }
 
 
-func GetSize(TerminalHeight int, TerminalWidth int,) (leftWidth int, rightWidth int, stacked bool){
 
-	availableWidth := TerminalWidth
-	if availableWidth <= 0 {
-		availableWidth = 120
-	}
-// TODO calculations below can be moved to a utility getSize function
-	minPaneWidth := 28
-	gap := 2
-	stacked = availableWidth < 90
-
-	leftWidth = availableWidth - 4
-	rightWidth = leftWidth - 4
-	if !stacked {
-		leftWidth = int(float64(availableWidth) * 0.58)
-		rightWidth = availableWidth - leftWidth - gap - 6
-		if leftWidth < 34 {
-			leftWidth = 34
-		}
-		if rightWidth < 24 {
-			rightWidth = 24 - 6
-		}
-		if leftWidth+rightWidth+gap > availableWidth {
-			rightWidth = availableWidth - leftWidth - gap - 6
-		}
-		if rightWidth < minPaneWidth {
-			rightWidth = minPaneWidth
-		}
-	} else {
-		if leftWidth < minPaneWidth {
-			leftWidth = minPaneWidth
-		}
-		rightWidth = leftWidth - 6
-	}
-
-	return leftWidth, rightWidth, stacked
-}
+// =================================
+// Model render Logic
+// =================================
 
 func (m Model) Init() tea.Cmd {
 	 return tea.Batch(tea.WindowSize(),
@@ -98,6 +72,23 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	
+	case USBFrameMsg:
+		if msg.Err == nil {
+			m.Dash.CPUUsage = msg.Frame.CPU
+			m.Dash.RAMUsage = msg.Frame.RAM
+			if msg.Frame.Log != "" {
+				entry := helpers.LogEntry{
+					Timestamp: helpers.SKYnow(),
+					Category: helpers.LogCategory(msg.Frame.Category),
+					Message: msg.Frame.Log,
+				}
+				m.Dash.LogsBuffer.Add(entry)
+			}
+
+			return m, waitForUSBData(m.usbConn)
+
+		}
+		return m, nil
 	
 	case FetchMsg:
 		for _, entry := range msg.Entries{
@@ -226,6 +217,11 @@ func (m Model) View() string {
 	return renderHome(m.Home, m.Height, m.Width, m.TrustLevel, m.Home.Uptime)  
 }
 
+
+//  =================================
+// Fetch Entries logic
+// ================================= 
+
 func fetchMetricsCmd(prevSample sysinfo.CPUSample) tea.Cmd{
 	return func() tea.Msg{
 		currSample, _ := sysinfo.GetCPUSample()
@@ -276,3 +272,55 @@ func collectTickCmd() tea.Cmd {
 		return fetchAllCmd()()
 	})
 }
+
+
+//  =================================
+// Utility functions
+// ================================= 
+
+
+func GetSize(TerminalHeight int, TerminalWidth int,) (leftWidth int, rightWidth int, stacked bool){
+
+	availableWidth := TerminalWidth
+	if availableWidth <= 0 {
+		availableWidth = 120
+	}
+// TODO calculations below can be moved to a utility getSize function
+	minPaneWidth := 28
+	gap := 2
+	stacked = availableWidth < 90
+
+	leftWidth = availableWidth - 4
+	rightWidth = leftWidth - 4
+	if !stacked {
+		leftWidth = int(float64(availableWidth) * 0.58)
+		rightWidth = availableWidth - leftWidth - gap - 6
+		if leftWidth < 34 {
+			leftWidth = 34
+		}
+		if rightWidth < 24 {
+			rightWidth = 24 - 6
+		}
+		if leftWidth+rightWidth+gap > availableWidth {
+			rightWidth = availableWidth - leftWidth - gap - 6
+		}
+		if rightWidth < minPaneWidth {
+			rightWidth = minPaneWidth
+		}
+	} else {
+		if leftWidth < minPaneWidth {
+			leftWidth = minPaneWidth
+		}
+		rightWidth = leftWidth - 6
+	}
+
+	return leftWidth, rightWidth, stacked
+}
+
+func waitForUSBData(connection *connection.USBConnection) tea.Cmd {
+	return func() tea.Msg {
+		frame, err := connection.ReadNextFrame()
+		return USBFrameMsg{Frame: frame, Err: err}
+	}
+}
+

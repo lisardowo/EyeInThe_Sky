@@ -31,7 +31,7 @@ type LogEntry struct {
 	Category	LogCategory
 }
 
-func now() string {
+func SKYnow() string {
 	return time.Now().Format("15:04:05")
 }
 
@@ -167,7 +167,7 @@ func readSingleProcess(pid int) (LogEntry, bool){
 	}
 
 	return LogEntry{
-		Timestamp:  now(),
+		Timestamp:  SKYnow(),
 		Level:		level,
 		Category:	CatProcess,
 		Message:	fmt.Sprintf("pid:%-6d %-16s state:%-2s exe:%s", pid, command, state, exePath), // message is constructed in two moments
@@ -203,7 +203,7 @@ func readNetworkTable(path string, protocol string)([]LogEntry, error){
 			return entries, scanner.Err()
 		}
 		entries = append(entries, LogEntry{
-			Timestamp: now(),
+			Timestamp: SKYnow(),
 			Level: "INFO",
 			Category: CatNetwork,
 			Message: fmt.Sprintf("[%s] %s -> %s : State{%s}", protocol, localAddress,remoteAddress, state),
@@ -244,7 +244,7 @@ func ReadModulesLogs()([]LogEntry, error){
 		useCount := fields[2]
 
 		entries = append(entries, LogEntry{
-			Timestamp: now(),
+			Timestamp: SKYnow(),
 			Level: "INFO",
 			Category: CatKernel,
 			Message: fmt.Sprintf("%-20s size:%-8s used:%s", name, size, useCount)})
@@ -275,7 +275,7 @@ func ReadDiskstatsLogs()([]LogEntry, error){
 			continue //ignore loop/ram devices since dont have valuable information
 		}
 		entries = append(entries, LogEntry{
-			Timestamp: now(),
+			Timestamp: SKYnow(),
 			Level: "INFO",
 			Category: CatSystem,
 			Message: fmt.Sprintf("%-8s sectors_read:%-10s sectors_written:%s", device, sectorsRead, sectorsWritten),
