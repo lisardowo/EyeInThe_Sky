@@ -286,7 +286,7 @@ func collectTickCmd() tea.Cmd {
 
 
 //  =================================
-// Utility functions
+//   Utility functions
 // ================================= 
 
 

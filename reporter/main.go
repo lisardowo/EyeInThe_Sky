@@ -1,8 +1,7 @@
 package reporter
 
 import (
-	"EyeInThe_Sky/helpers"
-	"EyeInThe_Sky/sysinfo"
+
 	"bufio"
 	"encoding/json"
 	"fmt"
@@ -10,7 +9,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
 	"EyeInTheSky/TUI"
 	"EyeInTheSky/helpers"
 	"EyeInTheSky/sysinfo"
@@ -27,9 +25,9 @@ const (
 )
 
 type report struct {
-	entry 	helpers.LogEntry
-	cpu		sysinfo.CPUSample
-	ram		float64
+	allEntries 	[]helpers.LogEntry
+	cpu			sysinfo.CPUSample
+	ram			float64
 }
 
 func resolvePort() string{
@@ -106,18 +104,40 @@ func streamMetrics(port serial.Port){
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
 
-	prevSample, err := sysinfo.GetCPUSample()
+	sampleNow, err := sysinfo.GetCPUSample()
 	if err != nil {
 		prevSample = sysinfo.CPUSample{}
 	}
 
 
 	for range ticker.C {
-		payload := helpers.LogEntry{
-			CPU:	
-			RAM: 
-			Logs:
-			Category
+
+		var all []helpers.LogEntry
+
+		if e, err := helpers.ReadProcessLogs(); err == nil {
+			all = append(all, e...)
+		}
+		if e, err := helpers.ReadTCPLogs(); err == nil {
+			all = append(all, e...)
+		}
+		if e, err := helpers.ReadUDPLogs(); err == nil {
+			all = append(all, e...)
+		}
+		if e, err := helpers.ReadModulesLogs(); err == nil {
+			all = append(all, e...)
+		}
+		if e, err := helpers.ReadDiskstatsLogs(); err == nil {
+			all = append(all, e...)
+		}
+		ramU, _ :=  sysinfo.GetRamUsage()
+		payload := report{
+			
+			allEntries: all,
+			cpu:  	sysinfo.CPUSample{
+						Idle:  sampleNow.Idle,
+						Total: sampleNow.Total
+					},
+			ram:  		ramU,
 		}
 	}
 }
