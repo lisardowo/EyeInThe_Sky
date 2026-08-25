@@ -34,3 +34,4 @@ go.work.sum
 # .vscode/
 .eyeinthesky_report.log
 /TEST
+/TEST/bs.go

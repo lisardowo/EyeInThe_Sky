@@ -52,7 +52,15 @@ Current errors Ive found
 20. ~~ Log entries are not formated and return ALL processes instead of buffer allowed ones ~~
 ~~ 21. Log process return 1 slice (using only 1 space of the ring buffer), this creates a bug where the screen is full but the ring buffer only have 1 space ocuppied therefore  not cycling the logs ~~
 ~~22. Log process is stuck at N elements its allowed to and wont check after that. Implementation plant suggest that the routine is always checking for the ultimate status of the processes to return them		 ~~
-23. Log is working, but filters are kind of not doing it properly, gotta check that and rework the logic
+23. Log is working, but filters are kind of not doing it properly, gotta check that and rework the logic: When you put a filter it just displays the information currently on buffer so if P.e Processes has no new updates and has been left completely out of the ring buffer it will show as empty(Expected output is the tool to ran the command again and show all the process that are just of that type) 
+
+24. Create a separate log fot the tool itself
+
+## Demon - Client Architecture
+
+For this project to go you must compile reporter/main.go and leave the bin file running as a demon in your machines to be diagnosed/analyzed, this demon is idle until it detects an usb, it checks if its a request for SYN from the tool and goes idle if it is not.
+
+When the demon detects connection it starts communicating the information to the tool via USB 
 
 ## Code Reference
 
@@ -275,3 +283,9 @@ func renderProgressBar(percent float64, width int) string {
 	return strings.Repeat("█", bars)
 }
 ```
+
+# DISCLAIMER
+
+There are a lot of bugs that I will be working on later on (rn I want to do other stuff), if you find one feel free to tell me and some day I will take back the development of this tools.
+
+UsbConnection was built based on suppositions and documentation but I was not able to test it in the machines because my servers have been down for almost a month now and it will take me some time until I can get them up but as soon as im able to test it I will correct any important bug 
