@@ -1,17 +1,14 @@
 package reporter
 
 import (
-
+	"EyeInTheSky/helpers"
+	"EyeInTheSky/sysinfo"
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"go/scanner"
 	"os"
 	"strings"
 	"time"
-	"EyeInTheSky/TUI"
-	"EyeInTheSky/helpers"
-	"EyeInTheSky/sysinfo"
 
 	"go.bug.st/serial"
 )
@@ -106,7 +103,7 @@ func streamMetrics(port serial.Port){
 
 	sampleNow, err := sysinfo.GetCPUSample()
 	if err != nil {
-		prevSample = sysinfo.CPUSample{}
+		sampleNow = sysinfo.CPUSample{}
 	}
 
 
@@ -135,9 +132,20 @@ func streamMetrics(port serial.Port){
 			allEntries: all,
 			cpu:  	sysinfo.CPUSample{
 						Idle:  sampleNow.Idle,
-						Total: sampleNow.Total
+						Total: sampleNow.Total,
 					},
 			ram:  		ramU,
 		}
+
+		raw, err := json.Marshal(payload)
+		if err != nil{
+			continue
+		}
+
+		if _, err := port.Write(append(raw, '\n')); err != nil{
+			fmt.Println("[DAEMON] -> Problem writing to USB port")
+			return
+		}
+
 	}
 }
