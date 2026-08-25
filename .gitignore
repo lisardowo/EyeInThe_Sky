@@ -33,3 +33,4 @@ go.work.sum
 # .idea/
 # .vscode/
 .eyeinthesky_report.log
+/TEST
